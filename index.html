@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Events by Gaby — Wedding & Event Planning</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --olive:    #6B7A3E;
+    --olive-lt: #8E9E55;
+    --olive-bg: #F2F0E6;
+    --burg:     #7D2C3B;
+    --burg-lt:  #A84455;
+    --navy:     #2C3E6B;
+    --blue-lt:  #4A6FA5;
+    --orange:   #C95D2E;
+    --orange-lt:#E07A4A;
+    --cream:    #FAF7F0;
+    --sand:     #EDE8D8;
+    --dark:     #1E1A14;
+    --mid:      #5C5040;
+    --border:   #D8D0BC;
+    --white:    #FFFFFF;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--dark);
+    overflow-x: hidden;
+  }
+
+  /* ── GRAIN OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* ══════════════════════════════
+     NAV
+  ══════════════════════════════ */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 48px;
+    height: 68px;
+    background: rgba(250,247,240,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    transition: box-shadow .3s;
+  }
+  nav.scrolled { box-shadow: 0 4px 24px rgba(30,26,20,0.08); }
+
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--dark);
+    text-decoration: none;
+    letter-spacing: 0.5px;
+  }
+  .nav-logo em { font-style: italic; color: var(--burg); }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 36px;
+    list-style: none;
+  }
+  .nav-links a {
+    text-decoration: none;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--mid);
+    transition: color .2s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -3px; left: 0; right: 0;
+    height: 1px;
+    background: var(--orange);
+    transform: scaleX(0);
+    transition: transform .25s;
+  }
+  .nav-links a:hover { color: var(--dark); }
+  .nav-links a:hover::after { transform: scaleX(1); }
+
+  .nav-cta {
+    padding: 10px 22px;
+    background: var(--burg);
+    color: white !important;
+    border-radius: 4px;
+    font-size: 11px !important;
+    letter-spacing: 2px !important;
+    transition: background .2s !important;
+  }
+  .nav-cta:hover { background: var(--burg-lt) !important; }
+  .nav-cta::after { display: none !important; }
+
+  .nav-hamburger { display: none; background: none; border: none; cursor: pointer; padding: 4px; }
+  .nav-hamburger span { display: block; width: 22px; height: 1.5px; background: var(--dark); margin: 5px 0; transition: all .3s; }
+
+  /* ══════════════════════════════
+     HERO
+  ══════════════════════════════ */
+  #home {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding-top: 68px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px 60px 80px 72px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .hero-eyebrow-line { width: 40px; height: 1.5px; background: var(--orange); }
+  .hero-eyebrow span {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--orange);
+    font-weight: 500;
+  }
+
+  .hero-h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(46px, 5.5vw, 76px);
+    font-weight: 400;
+    line-height: 1.05;
+    color: var(--dark);
+    margin-bottom: 28px;
+  }
+  .hero-h1 em {
+    font-style: italic;
+    color: var(--burg);
+    display: block;
+  }
+
+  .hero-desc {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--mid);
+    max-width: 420px;
+    margin-bottom: 44px;
+    font-weight: 300;
+  }
+
+  .hero-actions { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+
+  .btn-primary {
+    padding: 16px 32px;
+    background: var(--burg);
+    color: white;
+    text-decoration: none;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 500;
+    border-radius: 4px;
+    transition: background .2s, transform .2s;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--burg-lt); transform: translateY(-1px); }
+
+  .btn-ghost {
+    padding: 15px 32px;
+    border: 1.5px solid var(--border);
+    color: var(--dark);
+    text-decoration: none;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 500;
+    border-radius: 4px;
+    transition: border-color .2s, color .2s;
+    display: inline-block;
+  }
+  .btn-ghost:hover { border-color: var(--olive); color: var(--olive); }
+
+  .hero-stats {
+    display: flex;
+    gap: 40px;
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid var(--border);
+  }
+  .hero-stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--olive);
+  }
+  .hero-stat-label { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--mid); margin-top: 3px; }
+
+  /* Hero right — geometric collage */
+  .hero-right {
+    position: relative;
+    overflow: hidden;
+    background: var(--sand);
+  }
+
+  .hero-geo {
+    position: absolute; inset: 0;
+    overflow: hidden;
+  }
+
+  /* Big circle */
+  .hero-geo::before {
+    content: '';
+    position: absolute;
+    width: 70%;
+    padding-bottom: 70%;
+    border-radius: 50%;
+    background: var(--olive-bg);
+    top: 10%; left: 15%;
+    border: 2px solid rgba(107,122,62,0.2);
+  }
+
+  /* MCM geometric shapes */
+  .shape {
+    position: absolute;
+    border-radius: 2px;
+  }
+  .shape-1 {
+    width: 180px; height: 240px;
+    background: var(--burg);
+    top: 12%; left: 8%;
+    border-radius: 90px 90px 4px 4px;
+    opacity: 0.85;
+  }
+  .shape-2 {
+    width: 120px; height: 120px;
+    background: var(--orange);
+    top: 15%; right: 12%;
+    border-radius: 50%;
+    opacity: 0.8;
+  }
+  .shape-3 {
+    width: 160px; height: 80px;
+    background: var(--navy);
+    bottom: 25%; left: 20%;
+    border-radius: 4px;
+    opacity: 0.75;
+  }
+  .shape-4 {
+    width: 90px; height: 90px;
+    background: var(--olive);
+    bottom: 18%; right: 18%;
+    transform: rotate(45deg);
+    opacity: 0.7;
+  }
+  .shape-5 {
+    width: 200px; height: 200px;
+    border: 3px solid var(--burg);
+    border-radius: 50%;
+    top: 45%; left: 35%;
+    opacity: 0.3;
+  }
+  .shape-6 {
+    width: 60px; height: 200px;
+    background: var(--orange-lt);
+    top: 55%; right: 8%;
+    border-radius: 30px;
+    opacity: 0.5;
+  }
+
+  .hero-badge {
+    position: absolute;
+    bottom: 40px; left: 40px;
+    background: var(--dark);
+    color: white;
+    padding: 20px 24px;
+    border-radius: 8px;
+    z-index: 3;
+  }
+  .hero-badge-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-style: italic;
+    line-height: 1.1;
+    color: var(--orange-lt);
+  }
+  .hero-badge-sub {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    margin-top: 6px;
+  }
+
+  /* ══════════════════════════════
+     SECTION SHARED STYLES
+  ══════════════════════════════ */
+  section { padding: 100px 72px; }
+
+  .section-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .section-eyebrow-line { width: 32px; height: 1.5px; background: var(--orange); flex-shrink: 0; }
+  .section-eyebrow span {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--orange);
+    font-weight: 500;
+  }
+
+  .section-h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(32px, 4vw, 52px);
+    font-weight: 400;
+    line-height: 1.1;
+    color: var(--dark);
+  }
+  .section-h2 em { font-style: italic; color: var(--burg); }
+
+  /* ══════════════════════════════
+     ABOUT
+  ══════════════════════════════ */
+  #about {
+    background: var(--dark);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    padding: 100px 72px;
+  }
+
+  .about-visual {
+    position: relative;
+  }
+
+  .about-main-block {
+    background: var(--olive);
+    border-radius: 8px;
+    aspect-ratio: 3/4;
+    max-height: 480px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .about-main-block::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 30% 30%, rgba(201,93,46,0.4), transparent 60%);
+  }
+
+  .about-initials {
+    font-family: 'Playfair Display', serif;
+    font-size: 120px;
+    font-weight: 700;
+    font-style: italic;
+    color: rgba(255,255,255,0.15);
+    letter-spacing: -4px;
+    user-select: none;
+    position: relative;
+    z-index: 1;
+  }
+
+  .about-accent-block {
+    position: absolute;
+    bottom: -24px; right: -24px;
+    width: 140px; height: 140px;
+    background: var(--orange);
+    border-radius: 8px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    padding: 16px;
+  }
+  .about-accent-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    font-weight: 700;
+    color: white;
+    line-height: 1;
+  }
+  .about-accent-label { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.8); margin-top: 4px; }
+
+  .about-stripe {
+    position: absolute;
+    top: -20px; left: -20px;
+    width: 80px; height: 80px;
+    border: 3px solid var(--navy);
+    border-radius: 50%;
+    opacity: 0.6;
+  }
+
+  .about-right .section-eyebrow-line { background: var(--orange); }
+  .about-right .section-eyebrow span { color: var(--orange-lt); }
+
+  .about-right .section-h2 { color: var(--cream); }
+  .about-right .section-h2 em { color: var(--orange-lt); }
+
+  .about-body {
+    font-size: 16px;
+    line-height: 1.8;
+    color: rgba(250,247,240,0.65);
+    font-weight: 300;
+    margin: 24px 0 32px;
+  }
+
+  .about-tags { display: flex; gap: 10px; flex-wrap: wrap; }
+  .about-tag {
+    padding: 7px 16px;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 3px;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+  }
+
+  /* ══════════════════════════════
+     SERVICES
+  ══════════════════════════════ */
+  #services {
+    background: var(--sand);
+    padding: 100px 72px;
+  }
+
+  .services-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 60px;
+    gap: 40px;
+  }
+
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .service-card {
+    background: var(--cream);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform .3s, box-shadow .3s;
+    cursor: default;
+  }
+  .service-card:hover { transform: translateY(-6px); box-shadow: 0 20px 48px rgba(30,26,20,0.1); }
+
+  .service-card-top {
+    height: 8px;
+  }
+  .service-card-top.olive { background: var(--olive); }
+  .service-card-top.burg { background: var(--burg); }
+  .service-card-top.navy { background: var(--navy); }
+
+  .service-card-body { padding: 32px 28px 36px; }
+
+  .service-icon {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+  .service-icon.olive { background: rgba(107,122,62,0.12); }
+  .service-icon.burg { background: rgba(125,44,59,0.1); }
+  .service-icon.navy { background: rgba(44,62,107,0.1); }
+
+  .service-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--dark);
+    margin-bottom: 10px;
+  }
+  .service-desc {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--mid);
+    font-weight: 300;
+    margin-bottom: 24px;
+  }
+
+  .service-price {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--burg);
+  }
+  .service-price-label { font-size: 11px; letter-spacing: 1px; color: var(--mid); margin-top: 2px; }
+
+  .service-includes {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+  .service-includes li {
+    font-size: 13px;
+    color: var(--mid);
+    padding: 5px 0;
+    list-style: none;
+    padding-left: 16px;
+    position: relative;
+  }
+  .service-includes li::before {
+    content: '—';
+    position: absolute; left: 0;
+    color: var(--orange);
+    font-size: 12px;
+  }
+
+  /* ══════════════════════════════
+     PORTFOLIO
+  ══════════════════════════════ */
+  #portfolio {
+    background: var(--cream);
+    padding: 100px 72px;
+  }
+
+  .portfolio-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 56px;
+  }
+
+  .portfolio-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-rows: 280px 280px;
+    gap: 16px;
+  }
+
+  .portfolio-item {
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+  }
+  .portfolio-item:first-child { grid-row: 1 / 3; }
+
+  .portfolio-bg {
+    position: absolute; inset: 0;
+    transition: transform .4s;
+  }
+  .portfolio-item:hover .portfolio-bg { transform: scale(1.04); }
+
+  .p1 { background: linear-gradient(135deg, var(--olive) 0%, #4A5A2E 100%); }
+  .p2 { background: linear-gradient(135deg, var(--burg) 0%, #5C1E2A 100%); }
+  .p3 { background: linear-gradient(135deg, var(--navy) 0%, #1A2440 100%); }
+  .p4 { background: linear-gradient(135deg, var(--orange) 0%, #A04020 100%); }
+  .p5 { background: linear-gradient(135deg, #5C6B3E 0%, var(--navy) 100%); }
+
+  .portfolio-geo {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0.2;
+  }
+  .portfolio-geo svg { width: 60%; height: 60%; }
+
+  .portfolio-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(30,26,20,0.8) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity .3s;
+    display: flex;
+    align-items: flex-end;
+    padding: 24px;
+  }
+  .portfolio-item:hover .portfolio-overlay { opacity: 1; }
+
+  .portfolio-label {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 18px;
+    color: white;
+  }
+
+  .portfolio-coming {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 8px;
+  }
+  .portfolio-coming-icon { font-size: 32px; opacity: 0.5; }
+  .portfolio-coming-text {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+  }
+
+  /* ══════════════════════════════
+     CONTACT / CTA
+  ══════════════════════════════ */
+  #contact {
+    background: var(--burg);
+    padding: 100px 72px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #contact::before {
+    content: '';
+    position: absolute;
+    width: 500px; height: 500px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.08);
+    top: -200px; right: -100px;
+  }
+  #contact::after {
+    content: '';
+    position: absolute;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.06);
+    bottom: -100px; left: 10%;
+  }
+
+  .contact-inner {
+    max-width: 680px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .contact-eyebrow span { color: rgba(255,255,255,0.5); }
+  .contact-eyebrow .section-eyebrow-line { background: rgba(255,255,255,0.3); }
+
+  .contact-h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(36px, 5vw, 60px);
+    font-weight: 400;
+    color: var(--cream);
+    line-height: 1.1;
+    margin-bottom: 20px;
+  }
+  .contact-h2 em { font-style: italic; color: var(--orange-lt); }
+
+  .contact-desc {
+    font-size: 16px;
+    line-height: 1.7;
+    color: rgba(250,247,240,0.65);
+    font-weight: 300;
+    margin-bottom: 44px;
+    max-width: 500px;
+  }
+
+  .contact-form { display: flex; flex-direction: column; gap: 16px; }
+  .contact-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .form-field { display: flex; flex-direction: column; gap: 8px; }
+  .form-field label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+  }
+  .form-field input, .form-field textarea, .form-field select {
+    padding: 14px 16px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 4px;
+    color: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color .2s;
+    -webkit-appearance: none;
+  }
+  .form-field input:focus, .form-field textarea:focus, .form-field select:focus {
+    border-color: var(--orange-lt);
+  }
+  .form-field input::placeholder, .form-field textarea::placeholder { color: rgba(255,255,255,0.25); }
+  .form-field textarea { resize: vertical; min-height: 100px; }
+  .form-field select option { background: var(--burg); color: white; }
+
+  .btn-submit {
+    padding: 16px 40px;
+    background: var(--dark);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background .2s, transform .2s;
+    align-self: flex-start;
+  }
+  .btn-submit:hover { background: #000; transform: translateY(-1px); }
+
+  /* ══════════════════════════════
+     FOOTER
+  ══════════════════════════════ */
+  footer {
+    background: var(--dark);
+    padding: 48px 72px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  .footer-brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--cream);
+  }
+  .footer-brand em { font-style: italic; color: var(--orange-lt); }
+  .footer-copy { font-size: 12px; color: rgba(255,255,255,0.3); letter-spacing: 1px; }
+  .footer-links { display: flex; gap: 28px; }
+  .footer-links a {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    text-decoration: none;
+    transition: color .2s;
+  }
+  .footer-links a:hover { color: var(--orange-lt); }
+
+  /* ══════════════════════════════
+     ANIMATIONS
+  ══════════════════════════════ */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity .7s ease, transform .7s ease;
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+  .fade-up:nth-child(2) { transition-delay: .1s; }
+  .fade-up:nth-child(3) { transition-delay: .2s; }
+  .fade-up:nth-child(4) { transition-delay: .3s; }
+
+  /* ══════════════════════════════
+     MOBILE
+  ══════════════════════════════ */
+  @media (max-width: 900px) {
+    nav { padding: 0 24px; }
+    .nav-links { display: none; }
+    .nav-links.open {
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 68px; left: 0; right: 0;
+      background: var(--cream);
+      padding: 24px;
+      border-bottom: 1px solid var(--border);
+      gap: 20px;
+      z-index: 99;
+    }
+    .nav-hamburger { display: block; }
+
+    #home { grid-template-columns: 1fr; min-height: auto; }
+    .hero-left { padding: 60px 28px 40px; }
+    .hero-right { height: 320px; }
+    .hero-stats { gap: 24px; }
+
+    #about { grid-template-columns: 1fr; padding: 60px 28px; gap: 40px; }
+    .about-main-block { max-height: 300px; }
+
+    section, #services, #portfolio, #contact, footer { padding: 60px 28px; }
+
+    .services-header, .portfolio-header { flex-direction: column; align-items: flex-start; gap: 20px; }
+    .services-grid { grid-template-columns: 1fr; }
+    .portfolio-grid { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(3, 200px); }
+    .portfolio-item:first-child { grid-row: auto; grid-column: 1 / 3; }
+
+    .contact-row { grid-template-columns: 1fr; }
+    footer { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav id="navbar">
+  <a href="#home" class="nav-logo"><em>Events</em> by Gaby</a>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#portfolio">Portfolio</a></li>
+    <li><a href="#contact" class="nav-cta">Let's Talk</a></li>
+    <li><a href="/portal" style="color:var(--olive);border-bottom:1px solid var(--olive);padding-bottom:2px;letter-spacing:2px;font-size:11px;">Client Portal</a></li>
+  </ul>
+  <button class="nav-hamburger" id="hamburger" onclick="toggleNav()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ══════════════════════════════
+     HERO
+══════════════════════════════ -->
+<section id="home">
+  <div class="hero-left">
+    <div class="hero-eyebrow">
+      <div class="hero-eyebrow-line"></div>
+      <span>Dallas, TX · Wedding Planning</span>
+    </div>
+
+    <h1 class="hero-h1">
+      Your wedding,
+      <em>beautifully</em>
+      orchestrated.
+    </h1>
+
+    <p class="hero-desc">
+      From first venue tour to final send-off, I handle every detail so you can be fully present on the most important day of your life.
+    </p>
+
+    <div class="hero-actions">
+      <a href="#contact" class="btn-primary">Start Planning</a>
+      <a href="#services" class="btn-ghost">View Services</a>
+    </div>
+
+    <div class="hero-stats">
+      <div>
+        <div class="hero-stat-num">100%</div>
+        <div class="hero-stat-label">Heart & Soul</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">Dallas</div>
+        <div class="hero-stat-label">Based & Beyond</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">✦</div>
+        <div class="hero-stat-label">Est. 2026</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="hero-geo">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+      <div class="shape shape-3"></div>
+      <div class="shape shape-4"></div>
+      <div class="shape shape-5"></div>
+      <div class="shape shape-6"></div>
+    </div>
+    <div class="hero-badge">
+      <div class="hero-badge-text">Every detail,<br>by design.</div>
+      <div class="hero-badge-sub">Events by Gaby · 2026</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+     ABOUT
+══════════════════════════════ -->
+<section id="about">
+  <div class="about-visual">
+    <div class="about-stripe"></div>
+    <div class="about-main-block">
+      <div class="about-initials">G</div>
+    </div>
+    <div class="about-accent-block">
+      <div class="about-accent-num">💍</div>
+      <div class="about-accent-label">Just Married</div>
+    </div>
+  </div>
+
+  <div class="about-right">
+    <div class="section-eyebrow">
+      <div class="section-eyebrow-line"></div>
+      <span>About Gaby</span>
+    </div>
+    <h2 class="section-h2" style="color:var(--cream)">Architect turned <em>wedding planner.</em></h2>
+    <p class="about-body">
+      Hi, I'm Gaby — a Dallas-based technical designer and newlywed with a passion for turning big ideas into flawlessly executed events. After planning my own wedding from start to finish, I discovered my true calling: making magic happen for other couples. My architecture background means I think in timelines, details, and spatial flow — so nothing falls through the cracks.
+    </p>
+    <div class="about-tags">
+      <span class="about-tag">Architecture Background</span>
+      <span class="about-tag">Project Management</span>
+      <span class="about-tag">Dallas · DFW</span>
+      <span class="about-tag">Detail-Obsessed</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+     SERVICES
+══════════════════════════════ -->
+<section id="services">
+  <div class="services-header">
+    <div>
+      <div class="section-eyebrow">
+        <div class="section-eyebrow-line"></div>
+        <span>What I Offer</span>
+      </div>
+      <h2 class="section-h2">Services & <em>Pricing</em></h2>
+    </div>
+    <p style="font-size:14px;color:var(--mid);max-width:300px;font-weight:300;line-height:1.6">Every package is fully customizable. Reach out to build something just for you.</p>
+  </div>
+
+  <div class="services-grid">
+    <!-- Day-of -->
+    <div class="service-card fade-up">
+      <div class="service-card-top olive"></div>
+      <div class="service-card-body">
+        <div class="service-icon olive">🌿</div>
+        <div class="service-name">Day-of Coordination</div>
+        <div class="service-desc">You've planned everything — I make sure it all runs perfectly on the day. Vendor management, timeline execution, and keeping every moment on track.</div>
+        <div class="service-price">$800<span style="font-size:14px;font-weight:400">+</span></div>
+        <div class="service-price-label">Starting price</div>
+        <ul class="service-includes">
+          <li>1 planning meeting + final walkthrough</li>
+          <li>Full day-of coordination (up to 10 hrs)</li>
+          <li>Vendor point of contact</li>
+          <li>Timeline creation & management</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Partial -->
+    <div class="service-card fade-up">
+      <div class="service-card-top burg"></div>
+      <div class="service-card-body">
+        <div class="service-icon burg">🌸</div>
+        <div class="service-name">Partial Planning</div>
+        <div class="service-desc">You've started but need an expert to take it over the finish line. I step in wherever you need and make sure nothing is missed.</div>
+        <div class="service-price">$1,800<span style="font-size:14px;font-weight:400">+</span></div>
+        <div class="service-price-label">Starting price</div>
+        <ul class="service-includes">
+          <li>Up to 5 planning sessions</li>
+          <li>Vendor recommendations & reviews</li>
+          <li>Budget tracking & management</li>
+          <li>Full day-of coordination</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Full -->
+    <div class="service-card fade-up">
+      <div class="service-card-top navy"></div>
+      <div class="service-card-body">
+        <div class="service-icon navy">✨</div>
+        <div class="service-name">Full Planning</div>
+        <div class="service-desc">From engagement to send-off, I handle everything. You enjoy the journey while I bring your vision to life with every beautiful detail.</div>
+        <div class="service-price">$3,500<span style="font-size:14px;font-weight:400">+</span></div>
+        <div class="service-price-label">Starting price</div>
+        <ul class="service-includes">
+          <li>Unlimited planning sessions</li>
+          <li>Venue & vendor sourcing</li>
+          <li>Design concept & mood boards</li>
+          <li>Budget & guest list management</li>
+          <li>Full day-of coordination</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+     PORTFOLIO
+══════════════════════════════ -->
+<section id="portfolio">
+  <div class="portfolio-header">
+    <div>
+      <div class="section-eyebrow">
+        <div class="section-eyebrow-line"></div>
+        <span>Our Work</span>
+      </div>
+      <h2 class="section-h2">Portfolio & <em>Gallery</em></h2>
+    </div>
+    <p style="font-size:14px;color:var(--mid);max-width:280px;font-weight:300;line-height:1.6">Photos coming soon as we build our portfolio of beautiful events.</p>
+  </div>
+
+  <div class="portfolio-grid">
+    <div class="portfolio-item">
+      <div class="portfolio-bg p1"></div>
+      <div class="portfolio-geo">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="40" stroke="white" stroke-width="1"/>
+          <rect x="20" y="20" width="60" height="60" stroke="white" stroke-width="1" transform="rotate(15 50 50)"/>
+        </svg>
+      </div>
+      <div class="portfolio-coming">
+        <div class="portfolio-coming-icon">📸</div>
+        <div class="portfolio-coming-text">Photos Coming Soon</div>
+      </div>
+      <div class="portfolio-overlay"><div class="portfolio-label">Coming Soon</div></div>
+    </div>
+    <div class="portfolio-item">
+      <div class="portfolio-bg p2"></div>
+      <div class="portfolio-geo">
+        <svg viewBox="0 0 100 100" fill="none"><polygon points="50,10 90,90 10,90" stroke="white" stroke-width="1"/></svg>
+      </div>
+      <div class="portfolio-coming"><div class="portfolio-coming-icon">✨</div><div class="portfolio-coming-text">Your Wedding Here</div></div>
+      <div class="portfolio-overlay"><div class="portfolio-label">Your Wedding Here</div></div>
+    </div>
+    <div class="portfolio-item">
+      <div class="portfolio-bg p3"></div>
+      <div class="portfolio-geo">
+        <svg viewBox="0 0 100 100" fill="none"><rect x="20" y="20" width="60" height="60" stroke="white" stroke-width="1" transform="rotate(45 50 50)"/></svg>
+      </div>
+      <div class="portfolio-coming"><div class="portfolio-coming-icon">🌸</div><div class="portfolio-coming-text">Gallery Growing</div></div>
+      <div class="portfolio-overlay"><div class="portfolio-label">Gallery Growing</div></div>
+    </div>
+    <div class="portfolio-item">
+      <div class="portfolio-bg p4"></div>
+      <div class="portfolio-geo">
+        <svg viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="35" stroke="white" stroke-width="1"/><circle cx="50" cy="50" r="20" stroke="white" stroke-width="1"/></svg>
+      </div>
+      <div class="portfolio-coming"><div class="portfolio-coming-icon">💐</div><div class="portfolio-coming-text">Florals & Details</div></div>
+      <div class="portfolio-overlay"><div class="portfolio-label">Florals & Details</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+     CONTACT
+══════════════════════════════ -->
+<section id="contact">
+  <div class="contact-inner">
+    <div class="section-eyebrow contact-eyebrow">
+      <div class="section-eyebrow-line"></div>
+      <span>Get in Touch</span>
+    </div>
+    <h2 class="contact-h2">Let's plan something <em>beautiful.</em></h2>
+    <p class="contact-desc">Tell me about your vision and I'll get back to you within 24 hours. Every great wedding starts with a conversation.</p>
+
+    <div class="contact-form">
+      <div class="contact-row">
+        <div class="form-field">
+          <label>Your Name</label>
+          <input type="text" placeholder="First & last name">
+        </div>
+        <div class="form-field">
+          <label>Partner's Name</label>
+          <input type="text" placeholder="First & last name">
+        </div>
+      </div>
+      <div class="contact-row">
+        <div class="form-field">
+          <label>Email</label>
+          <input type="email" placeholder="your@email.com">
+        </div>
+        <div class="form-field">
+          <label>Wedding Date</label>
+          <input type="text" placeholder="Month, Year or TBD">
+        </div>
+      </div>
+      <div class="contact-row">
+        <div class="form-field">
+          <label>Estimated Guest Count</label>
+          <input type="text" placeholder="e.g. 50–75 guests">
+        </div>
+        <div class="form-field">
+          <label>Service Interest</label>
+          <select>
+            <option value="" disabled selected>Select a package</option>
+            <option>Day-of Coordination</option>
+            <option>Partial Planning</option>
+            <option>Full Planning</option>
+            <option>Not sure yet</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Tell me about your vision</label>
+        <textarea placeholder="Venue, vibe, anything you're dreaming of..."></textarea>
+      </div>
+      <button class="btn-submit" onclick="handleSubmit(event)">Send Message →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-brand"><em>Events</em> by Gaby</div>
+  <div class="footer-copy">© 2026 Events by Gaby · Dallas, TX</div>
+  <div class="footer-links">
+    <a href="#home">Home</a>
+    <a href="#about">About</a>
+    <a href="#services">Services</a>
+    <a href="#contact">Contact</a>
+  </div>
+</footer>
+
+<script>
+  // ── NAV SCROLL ──
+  window.addEventListener('scroll', () => {
+    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  // ── HAMBURGER ──
+  function toggleNav() {
+    document.getElementById('nav-links').classList.toggle('open');
+  }
+  document.querySelectorAll('.nav-links a').forEach(a => {
+    a.addEventListener('click', () => document.getElementById('nav-links').classList.remove('open'));
+  });
+
+  // ── SCROLL ANIMATIONS ──
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  // ── FORM ──
+  function handleSubmit(e) {
+    e.preventDefault();
+    const btn = e.target;
+    btn.textContent = '✓ Message Sent!';
+    btn.style.background = '#4A7A40';
+    setTimeout(() => { btn.textContent = 'Send Message →'; btn.style.background = ''; }, 3000);
+  }
+</script>
+</body>
+</html>
