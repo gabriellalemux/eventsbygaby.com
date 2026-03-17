@@ -3,1146 +3,1650 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Events by Gaby — Wedding & Event Planning</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<title>Events by Gaby — Client Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-  :root {
-    --olive:    #6B7A3E;
-    --olive-lt: #8E9E55;
-    --olive-bg: #F2F0E6;
-    --burg:     #7D2C3B;
-    --burg-lt:  #A84455;
-    --navy:     #2C3E6B;
-    --blue-lt:  #4A6FA5;
-    --orange:   #C95D2E;
-    --orange-lt:#E07A4A;
-    --cream:    #FAF7F0;
-    --sand:     #EDE8D8;
-    --dark:     #1E1A14;
-    --mid:      #5C5040;
-    --border:   #D8D0BC;
-    --white:    #FFFFFF;
-  }
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--cream);
-    color: var(--dark);
-    overflow-x: hidden;
-  }
-
-  /* ── GRAIN OVERLAY ── */
-  body::before {
-    content: '';
-    position: fixed; inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 1000;
-    opacity: 0.4;
-  }
-
-  /* ══════════════════════════════
-     NAV
-  ══════════════════════════════ */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 48px;
-    height: 68px;
-    background: rgba(250,247,240,0.92);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-    transition: box-shadow .3s;
-  }
-  nav.scrolled { box-shadow: 0 4px 24px rgba(30,26,20,0.08); }
-
-  .nav-logo {
-    font-family: 'Playfair Display', serif;
-    font-size: 20px;
-    font-weight: 400;
-    color: var(--dark);
-    text-decoration: none;
-    letter-spacing: 0.5px;
-  }
-  .nav-logo em { font-style: italic; color: var(--burg); }
-
-  .nav-links {
-    display: flex;
-    align-items: center;
-    gap: 36px;
-    list-style: none;
-  }
-  .nav-links a {
-    text-decoration: none;
-    font-size: 12px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    font-weight: 500;
-    color: var(--mid);
-    transition: color .2s;
-    position: relative;
-  }
-  .nav-links a::after {
-    content: '';
-    position: absolute;
-    bottom: -3px; left: 0; right: 0;
-    height: 1px;
-    background: var(--orange);
-    transform: scaleX(0);
-    transition: transform .25s;
-  }
-  .nav-links a:hover { color: var(--dark); }
-  .nav-links a:hover::after { transform: scaleX(1); }
-
-  .nav-cta {
-    padding: 10px 22px;
-    background: var(--burg);
-    color: white !important;
-    border-radius: 4px;
-    font-size: 11px !important;
-    letter-spacing: 2px !important;
-    transition: background .2s !important;
-  }
-  .nav-cta:hover { background: var(--burg-lt) !important; }
-  .nav-cta::after { display: none !important; }
-
-  .nav-hamburger { display: none; background: none; border: none; cursor: pointer; padding: 4px; }
-  .nav-hamburger span { display: block; width: 22px; height: 1.5px; background: var(--dark); margin: 5px 0; transition: all .3s; }
-
-  /* ══════════════════════════════
-     HERO
-  ══════════════════════════════ */
-  #home {
-    min-height: 100vh;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding-top: 68px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .hero-left {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 80px 60px 80px 72px;
-    position: relative;
-    z-index: 2;
-  }
-
-  .hero-eyebrow {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 28px;
-  }
-  .hero-eyebrow-line { width: 40px; height: 1.5px; background: var(--orange); }
-  .hero-eyebrow span {
-    font-size: 11px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--orange);
-    font-weight: 500;
-  }
-
-  .hero-h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(46px, 5.5vw, 76px);
-    font-weight: 400;
-    line-height: 1.05;
-    color: var(--dark);
-    margin-bottom: 28px;
-  }
-  .hero-h1 em {
-    font-style: italic;
-    color: var(--burg);
-    display: block;
-  }
-
-  .hero-desc {
-    font-size: 16px;
-    line-height: 1.7;
-    color: var(--mid);
-    max-width: 420px;
-    margin-bottom: 44px;
-    font-weight: 300;
-  }
-
-  .hero-actions { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
-
-  .btn-primary {
-    padding: 16px 32px;
-    background: var(--burg);
-    color: white;
-    text-decoration: none;
-    font-size: 12px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    font-weight: 500;
-    border-radius: 4px;
-    transition: background .2s, transform .2s;
-    display: inline-block;
-  }
-  .btn-primary:hover { background: var(--burg-lt); transform: translateY(-1px); }
-
-  .btn-ghost {
-    padding: 15px 32px;
-    border: 1.5px solid var(--border);
-    color: var(--dark);
-    text-decoration: none;
-    font-size: 12px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    font-weight: 500;
-    border-radius: 4px;
-    transition: border-color .2s, color .2s;
-    display: inline-block;
-  }
-  .btn-ghost:hover { border-color: var(--olive); color: var(--olive); }
-
-  .hero-stats {
-    display: flex;
-    gap: 40px;
-    margin-top: 60px;
-    padding-top: 40px;
-    border-top: 1px solid var(--border);
-  }
-  .hero-stat-num {
-    font-family: 'Playfair Display', serif;
-    font-size: 32px;
-    font-weight: 700;
-    color: var(--olive);
-  }
-  .hero-stat-label { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--mid); margin-top: 3px; }
-
-  /* Hero right — geometric collage */
-  .hero-right {
-    position: relative;
-    overflow: hidden;
-    background: var(--sand);
-  }
-
-  .hero-geo {
-    position: absolute; inset: 0;
-    overflow: hidden;
-  }
-
-  /* Big circle */
-  .hero-geo::before {
-    content: '';
-    position: absolute;
-    width: 70%;
-    padding-bottom: 70%;
-    border-radius: 50%;
-    background: var(--olive-bg);
-    top: 10%; left: 15%;
-    border: 2px solid rgba(107,122,62,0.2);
-  }
-
-  /* MCM geometric shapes */
-  .shape {
-    position: absolute;
-    border-radius: 2px;
-  }
-  .shape-1 {
-    width: 180px; height: 240px;
-    background: var(--burg);
-    top: 12%; left: 8%;
-    border-radius: 90px 90px 4px 4px;
-    opacity: 0.85;
-  }
-  .shape-2 {
-    width: 120px; height: 120px;
-    background: var(--orange);
-    top: 15%; right: 12%;
-    border-radius: 50%;
-    opacity: 0.8;
-  }
-  .shape-3 {
-    width: 160px; height: 80px;
-    background: var(--navy);
-    bottom: 25%; left: 20%;
-    border-radius: 4px;
-    opacity: 0.75;
-  }
-  .shape-4 {
-    width: 90px; height: 90px;
-    background: var(--olive);
-    bottom: 18%; right: 18%;
-    transform: rotate(45deg);
-    opacity: 0.7;
-  }
-  .shape-5 {
-    width: 200px; height: 200px;
-    border: 3px solid var(--burg);
-    border-radius: 50%;
-    top: 45%; left: 35%;
-    opacity: 0.3;
-  }
-  .shape-6 {
-    width: 60px; height: 200px;
-    background: var(--orange-lt);
-    top: 55%; right: 8%;
-    border-radius: 30px;
-    opacity: 0.5;
-  }
-
-  .hero-badge {
-    position: absolute;
-    bottom: 40px; left: 40px;
-    background: var(--dark);
-    color: white;
-    padding: 20px 24px;
-    border-radius: 8px;
-    z-index: 3;
-  }
-  .hero-badge-text {
-    font-family: 'Playfair Display', serif;
-    font-size: 28px;
-    font-style: italic;
-    line-height: 1.1;
-    color: var(--orange-lt);
-  }
-  .hero-badge-sub {
-    font-size: 10px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.5);
-    margin-top: 6px;
-  }
-
-  /* ══════════════════════════════
-     SECTION SHARED STYLES
-  ══════════════════════════════ */
-  section { padding: 100px 72px; }
-
-  .section-eyebrow {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 20px;
-  }
-  .section-eyebrow-line { width: 32px; height: 1.5px; background: var(--orange); flex-shrink: 0; }
-  .section-eyebrow span {
-    font-size: 11px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--orange);
-    font-weight: 500;
-  }
-
-  .section-h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(32px, 4vw, 52px);
-    font-weight: 400;
-    line-height: 1.1;
-    color: var(--dark);
-  }
-  .section-h2 em { font-style: italic; color: var(--burg); }
-
-  /* ══════════════════════════════
-     ABOUT
-  ══════════════════════════════ */
-  #about {
-    background: var(--dark);
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 80px;
-    align-items: center;
-    padding: 100px 72px;
-  }
-
-  .about-visual {
-    position: relative;
-  }
-
-  .about-main-block {
-    background: var(--olive);
-    border-radius: 8px;
-    aspect-ratio: 3/4;
-    max-height: 480px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    position: relative;
-  }
-
-  .about-main-block::before {
-    content: '';
-    position: absolute; inset: 0;
-    background: radial-gradient(ellipse at 30% 30%, rgba(201,93,46,0.4), transparent 60%);
-  }
-
-  .about-initials {
-    font-family: 'Playfair Display', serif;
-    font-size: 120px;
-    font-weight: 700;
-    font-style: italic;
-    color: rgba(255,255,255,0.15);
-    letter-spacing: -4px;
-    user-select: none;
-    position: relative;
-    z-index: 1;
-  }
-
-  .about-accent-block {
-    position: absolute;
-    bottom: -24px; right: -24px;
-    width: 140px; height: 140px;
-    background: var(--orange);
-    border-radius: 8px;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    text-align: center;
-    padding: 16px;
-  }
-  .about-accent-num {
-    font-family: 'Playfair Display', serif;
-    font-size: 36px;
-    font-weight: 700;
-    color: white;
-    line-height: 1;
-  }
-  .about-accent-label { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.8); margin-top: 4px; }
-
-  .about-stripe {
-    position: absolute;
-    top: -20px; left: -20px;
-    width: 80px; height: 80px;
-    border: 3px solid var(--navy);
-    border-radius: 50%;
-    opacity: 0.6;
-  }
-
-  .about-right .section-eyebrow-line { background: var(--orange); }
-  .about-right .section-eyebrow span { color: var(--orange-lt); }
-
-  .about-right .section-h2 { color: var(--cream); }
-  .about-right .section-h2 em { color: var(--orange-lt); }
-
-  .about-body {
-    font-size: 16px;
-    line-height: 1.8;
-    color: rgba(250,247,240,0.65);
-    font-weight: 300;
-    margin: 24px 0 32px;
-  }
-
-  .about-tags { display: flex; gap: 10px; flex-wrap: wrap; }
-  .about-tag {
-    padding: 7px 16px;
-    border: 1px solid rgba(255,255,255,0.15);
-    border-radius: 3px;
-    font-size: 11px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.5);
-  }
-
-  /* ══════════════════════════════
-     SERVICES
-  ══════════════════════════════ */
-  #services {
-    background: var(--sand);
-    padding: 100px 72px;
-  }
-
-  .services-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 60px;
-    gap: 40px;
-  }
-
-  .services-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-  }
-
-  .service-card {
-    background: var(--cream);
-    border-radius: 8px;
-    overflow: hidden;
-    transition: transform .3s, box-shadow .3s;
-    cursor: default;
-  }
-  .service-card:hover { transform: translateY(-6px); box-shadow: 0 20px 48px rgba(30,26,20,0.1); }
-
-  .service-card-top {
-    height: 8px;
-  }
-  .service-card-top.olive { background: var(--olive); }
-  .service-card-top.burg { background: var(--burg); }
-  .service-card-top.navy { background: var(--navy); }
-
-  .service-card-body { padding: 32px 28px 36px; }
-
-  .service-icon {
-    width: 48px; height: 48px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 22px;
-    margin-bottom: 20px;
-  }
-  .service-icon.olive { background: rgba(107,122,62,0.12); }
-  .service-icon.burg { background: rgba(125,44,59,0.1); }
-  .service-icon.navy { background: rgba(44,62,107,0.1); }
-
-  .service-name {
-    font-family: 'Playfair Display', serif;
-    font-size: 22px;
-    font-weight: 400;
-    color: var(--dark);
-    margin-bottom: 10px;
-  }
-  .service-desc {
-    font-size: 14px;
-    line-height: 1.7;
-    color: var(--mid);
-    font-weight: 300;
-    margin-bottom: 24px;
-  }
-
-  .service-price {
-    font-family: 'Playfair Display', serif;
-    font-size: 28px;
-    font-weight: 700;
-    color: var(--burg);
-  }
-  .service-price-label { font-size: 11px; letter-spacing: 1px; color: var(--mid); margin-top: 2px; }
-
-  .service-includes {
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px solid var(--border);
-  }
-  .service-includes li {
-    font-size: 13px;
-    color: var(--mid);
-    padding: 5px 0;
-    list-style: none;
-    padding-left: 16px;
-    position: relative;
-  }
-  .service-includes li::before {
-    content: '—';
-    position: absolute; left: 0;
-    color: var(--orange);
-    font-size: 12px;
-  }
-
-  /* ══════════════════════════════
-     PORTFOLIO
-  ══════════════════════════════ */
-  #portfolio {
-    background: var(--cream);
-    padding: 100px 72px;
-  }
-
-  .portfolio-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 56px;
-  }
-
-  .portfolio-grid {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
-    grid-template-rows: 280px 280px;
-    gap: 16px;
-  }
-
-  .portfolio-item {
-    border-radius: 6px;
-    overflow: hidden;
-    position: relative;
-    cursor: pointer;
-  }
-  .portfolio-item:first-child { grid-row: 1 / 3; }
-
-  .portfolio-bg {
-    position: absolute; inset: 0;
-    transition: transform .4s;
-  }
-  .portfolio-item:hover .portfolio-bg { transform: scale(1.04); }
-
-  .p1 { background: linear-gradient(135deg, var(--olive) 0%, #4A5A2E 100%); }
-  .p2 { background: linear-gradient(135deg, var(--burg) 0%, #5C1E2A 100%); }
-  .p3 { background: linear-gradient(135deg, var(--navy) 0%, #1A2440 100%); }
-  .p4 { background: linear-gradient(135deg, var(--orange) 0%, #A04020 100%); }
-  .p5 { background: linear-gradient(135deg, #5C6B3E 0%, var(--navy) 100%); }
-
-  .portfolio-geo {
-    position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    opacity: 0.2;
-  }
-  .portfolio-geo svg { width: 60%; height: 60%; }
-
-  .portfolio-overlay {
-    position: absolute; inset: 0;
-    background: linear-gradient(to top, rgba(30,26,20,0.8) 0%, transparent 50%);
-    opacity: 0;
-    transition: opacity .3s;
-    display: flex;
-    align-items: flex-end;
-    padding: 24px;
-  }
-  .portfolio-item:hover .portfolio-overlay { opacity: 1; }
-
-  .portfolio-label {
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    font-size: 18px;
-    color: white;
-  }
-
-  .portfolio-coming {
-    position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    flex-direction: column; gap: 8px;
-  }
-  .portfolio-coming-icon { font-size: 32px; opacity: 0.5; }
-  .portfolio-coming-text {
-    font-size: 10px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.4);
-  }
-
-  /* ══════════════════════════════
-     CONTACT / CTA
-  ══════════════════════════════ */
-  #contact {
-    background: var(--burg);
-    padding: 100px 72px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  #contact::before {
-    content: '';
-    position: absolute;
-    width: 500px; height: 500px;
-    border-radius: 50%;
-    border: 2px solid rgba(255,255,255,0.08);
-    top: -200px; right: -100px;
-  }
-  #contact::after {
-    content: '';
-    position: absolute;
-    width: 300px; height: 300px;
-    border-radius: 50%;
-    border: 2px solid rgba(255,255,255,0.06);
-    bottom: -100px; left: 10%;
-  }
-
-  .contact-inner {
-    max-width: 680px;
-    position: relative;
-    z-index: 2;
-  }
-
-  .contact-eyebrow span { color: rgba(255,255,255,0.5); }
-  .contact-eyebrow .section-eyebrow-line { background: rgba(255,255,255,0.3); }
-
-  .contact-h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(36px, 5vw, 60px);
-    font-weight: 400;
-    color: var(--cream);
-    line-height: 1.1;
-    margin-bottom: 20px;
-  }
-  .contact-h2 em { font-style: italic; color: var(--orange-lt); }
-
-  .contact-desc {
-    font-size: 16px;
-    line-height: 1.7;
-    color: rgba(250,247,240,0.65);
-    font-weight: 300;
-    margin-bottom: 44px;
-    max-width: 500px;
-  }
-
-  .contact-form { display: flex; flex-direction: column; gap: 16px; }
-  .contact-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-
-  .form-field { display: flex; flex-direction: column; gap: 8px; }
-  .form-field label {
-    font-size: 10px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.4);
-  }
-  .form-field input, .form-field textarea, .form-field select {
-    padding: 14px 16px;
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.15);
-    border-radius: 4px;
-    color: white;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    outline: none;
-    transition: border-color .2s;
-    -webkit-appearance: none;
-  }
-  .form-field input:focus, .form-field textarea:focus, .form-field select:focus {
-    border-color: var(--orange-lt);
-  }
-  .form-field input::placeholder, .form-field textarea::placeholder { color: rgba(255,255,255,0.25); }
-  .form-field textarea { resize: vertical; min-height: 100px; }
-  .form-field select option { background: var(--burg); color: white; }
-
-  .btn-submit {
-    padding: 16px 40px;
-    background: var(--dark);
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 12px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background .2s, transform .2s;
-    align-self: flex-start;
-  }
-  .btn-submit:hover { background: #000; transform: translateY(-1px); }
-
-  /* ══════════════════════════════
-     FOOTER
-  ══════════════════════════════ */
-  footer {
-    background: var(--dark);
-    padding: 48px 72px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 20px;
-  }
-  .footer-brand {
-    font-family: 'Playfair Display', serif;
-    font-size: 18px;
-    font-weight: 400;
-    color: var(--cream);
-  }
-  .footer-brand em { font-style: italic; color: var(--orange-lt); }
-  .footer-copy { font-size: 12px; color: rgba(255,255,255,0.3); letter-spacing: 1px; }
-  .footer-links { display: flex; gap: 28px; }
-  .footer-links a {
-    font-size: 11px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.4);
-    text-decoration: none;
-    transition: color .2s;
-  }
-  .footer-links a:hover { color: var(--orange-lt); }
-
-  /* ══════════════════════════════
-     ANIMATIONS
-  ══════════════════════════════ */
-  .fade-up {
-    opacity: 0;
-    transform: translateY(28px);
-    transition: opacity .7s ease, transform .7s ease;
-  }
-  .fade-up.visible { opacity: 1; transform: translateY(0); }
-  .fade-up:nth-child(2) { transition-delay: .1s; }
-  .fade-up:nth-child(3) { transition-delay: .2s; }
-  .fade-up:nth-child(4) { transition-delay: .3s; }
-
-  /* ══════════════════════════════
-     MOBILE
-  ══════════════════════════════ */
-  @media (max-width: 900px) {
-    nav { padding: 0 24px; }
-    .nav-links { display: none; }
-    .nav-links.open {
-      display: flex;
-      flex-direction: column;
-      position: fixed;
-      top: 68px; left: 0; right: 0;
-      background: var(--cream);
-      padding: 24px;
-      border-bottom: 1px solid var(--border);
-      gap: 20px;
-      z-index: 99;
-    }
-    .nav-hamburger { display: block; }
-
-    #home { grid-template-columns: 1fr; min-height: auto; }
-    .hero-left { padding: 60px 28px 40px; }
-    .hero-right { height: 320px; }
-    .hero-stats { gap: 24px; }
-
-    #about { grid-template-columns: 1fr; padding: 60px 28px; gap: 40px; }
-    .about-main-block { max-height: 300px; }
-
-    section, #services, #portfolio, #contact, footer { padding: 60px 28px; }
-
-    .services-header, .portfolio-header { flex-direction: column; align-items: flex-start; gap: 20px; }
-    .services-grid { grid-template-columns: 1fr; }
-    .portfolio-grid { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(3, 200px); }
-    .portfolio-item:first-child { grid-row: auto; grid-column: 1 / 3; }
-
-    .contact-row { grid-template-columns: 1fr; }
-    footer { flex-direction: column; align-items: flex-start; }
-  }
+:root {
+  --burg:       #7D2C3B;
+  --burg-dark:  #5C1E2A;
+  --burg-light: #F0E0E3;
+  --olive:      #6B7A3E;
+  --olive-light:#EEF1E4;
+  --orange:     #C95D2E;
+  --orange-lt:  #E07A4A;
+  --navy:       #2C3E6B;
+  --cream:      #FAF7F0;
+  --sand:       #F5F0E8;
+  --dark:       #1E1A14;
+  --mid:        #5C5040;
+  --border:     #D8D0BC;
+  --white:      #FFFFFF;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--sand); color: var(--dark); min-height: 100vh; }
+.screen { display: none; min-height: 100vh; flex-direction: column; }
+.screen.active { display: flex; }
+
+/* ── LOGIN ── */
+#screen-login {
+  background: #4A1220;
+  align-items: center; justify-content: center;
+  padding: 40px 20px; position: relative; overflow: hidden;
+}
+#screen-login::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse at 20% 50%, rgba(201,93,46,0.15), transparent 50%),
+              radial-gradient(ellipse at 80% 50%, rgba(125,44,59,0.2), transparent 50%);
+}
+.login-box { position: relative; width: 100%; max-width: 400px; text-align: center; z-index: 1; }
+.login-eyebrow { font-size: 11px; letter-spacing: 5px; text-transform: uppercase; color: var(--olive); margin-bottom: 14px; }
+.login-logo { font-family: 'Playfair Display', serif; font-size: 48px; font-weight: 400; color: var(--cream); line-height: 1; }
+.login-logo em { font-style: italic; color: var(--olive-light); }
+.login-tagline { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,0.3); margin-top: 10px; }
+.login-divider { width: 50px; height: 1px; background: linear-gradient(90deg, transparent, var(--olive), transparent); margin: 28px auto; }
+.login-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.10); border-radius: 16px; padding: 32px 28px; }
+.login-card h2 { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 400; color: var(--cream); margin-bottom: 4px; }
+.login-card p { font-size: 12px; color: rgba(255,255,255,0.35); margin-bottom: 24px; letter-spacing: 1px; }
+.field { margin-bottom: 14px; text-align: left; }
+.field label { display: block; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 7px; }
+.field input {
+  width: 100%; padding: 12px 14px !important;
+  background: rgba(255,255,255,0.06) !important; border: 1px solid rgba(255,255,255,0.12) !important;
+  border-radius: 8px !important; color: white !important; font-family: 'DM Sans', sans-serif; font-size: 14px !important;
+  outline: none; transition: border-color .2s, background .2s; -webkit-text-fill-color: white !important;
+  border-bottom: 1px solid rgba(255,255,255,0.12) !important;
+}
+.field input:focus { border-color: var(--burg); background: rgba(125,44,59,0.25); }
+.field input:-webkit-autofill,
+.field input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #4A1A22 inset !important;
+  -webkit-text-fill-color: white !important;
+  border-color: var(--burg) !important;
+}
+.field input::placeholder { color: rgba(255,255,255,0.2); }
+.login-error { background: rgba(125,44,59,0.3); border: 1px solid var(--burg); border-radius: 6px; padding: 10px 14px; font-size: 12px; color: #F0C0C8; margin-bottom: 14px; display: none; text-align: left; }
+.btn-login { width: 100%; padding: 14px; background: var(--burg); border: none; border-radius: 8px; color: white; font-family: 'DM Sans', sans-serif; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; font-weight: 500; cursor: pointer; transition: background .2s; margin-top: 4px; }
+.btn-login:hover { background: var(--burg-dark); }
+.btn-login:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* ── SHARED TOP BAR ── */
+.top-bar { background: white; border-bottom: 1px solid var(--border); padding: 0 32px; height: 60px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; box-shadow: 0 2px 12px rgba(0,0,0,0.05); flex-shrink: 0; }
+.top-bar-brand { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 400; }
+.top-bar-brand em { font-style: italic; color: var(--burg); }
+.top-bar-right { display: flex; align-items: center; gap: 14px; }
+.top-bar-user { font-size: 12px; color: var(--mid); letter-spacing: 1px; }
+.btn-sm { padding: 7px 16px; border: 1px solid var(--border); border-radius: 6px; background: none; font-family: 'DM Sans', sans-serif; font-size: 11px; letter-spacing: 1px; color: var(--mid); cursor: pointer; transition: all .2s; }
+.btn-sm:hover { border-color: var(--burg); color: var(--burg); }
+
+/* ── LOADING SPINNER ── */
+.spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle; margin-right: 6px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-overlay { position: fixed; inset: 0; background: rgba(30,26,20,0.5); backdrop-filter: blur(3px); z-index: 500; display: none; align-items: center; justify-content: center; }
+.loading-overlay.show { display: flex; }
+.loading-box { background: #1E1A14; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 24px 32px; text-align: center; color: var(--cream); font-size: 13px; letter-spacing: 1px; }
+
+/* ── PLANNER DASHBOARD ── */
+.dashboard { max-width: 1060px; margin: 0 auto; padding: 36px 24px 60px; flex: 1; }
+.dash-title { font-family: 'Playfair Display', serif; font-size: 30px; font-weight: 400; margin-bottom: 4px; }
+.dash-title em { font-style: italic; color: var(--burg); }
+.dash-sub { font-size: 13px; color: var(--mid); margin-bottom: 28px; }
+.stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap: 14px; margin-bottom: 36px; }
+.stat-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 18px; text-align: center; border-top: 3px solid var(--burg); }
+.stat-card:nth-child(2) { border-top-color: var(--olive); }
+.stat-card:nth-child(3) { border-top-color: var(--olive); }
+.stat-card:nth-child(4) { border-top-color: var(--navy); }
+.stat-num { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 700; color: var(--dark); }
+.stat-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--mid); margin-top: 3px; }
+.section-row-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--olive); margin-bottom: 14px; display: flex; align-items: center; gap: 10px; }
+.section-row-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.clients-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 18px; margin-bottom: 20px; }
+.client-card { background: white; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; cursor: pointer; transition: transform .2s, box-shadow .2s; }
+.client-card:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+.cc-header { background: #1E1A14; padding: 18px 20px 14px; position: relative; overflow: hidden; }
+.cc-header::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 80% 50%, rgba(201,93,46,0.15), transparent 60%); }
+.cc-names { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 400; color: var(--cream); position: relative; }
+.cc-date { font-size: 11px; letter-spacing: 2px; color: rgba(255,255,255,0.4); margin-top: 3px; text-transform: uppercase; position: relative; }
+.cc-body { padding: 16px 20px; }
+.cc-prog-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--mid); margin-bottom: 6px; }
+.prog-bar { height: 3px; background: var(--burg-light); border-radius: 3px; margin-bottom: 14px; overflow: hidden; }
+.prog-fill { height: 100%; background: linear-gradient(90deg, var(--burg), var(--orange)); border-radius: 3px; }
+.cc-pills { display: flex; gap: 7px; flex-wrap: wrap; }
+.pill { padding: 3px 9px; border-radius: 20px; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; }
+.pill-green { background: var(--olive-light); color: var(--olive); }
+.pill-orange { background: #FBF0EA; color: #A84020; }
+.pill-burg { background: var(--burg-light); color: var(--burg); }
+.btn-add { width: 100%; padding: 14px; background: none; border: 1.5px dashed var(--burg); border-radius: 12px; color: var(--burg); font-family: 'DM Sans', sans-serif; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: background .2s; margin-bottom: 40px; }
+.btn-add:hover { background: var(--burg-light); }
+
+/* ── MODAL ── */
+.overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); backdrop-filter: blur(4px); z-index: 200; align-items: center; justify-content: center; padding: 20px; }
+.overlay.open { display: flex; }
+.modal { background: white; border-radius: 18px; padding: 32px; max-width: 460px; width: 100%; box-shadow: 0 20px 50px rgba(0,0,0,0.15); }
+.modal h3 { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 400; margin-bottom: 4px; }
+.modal h3 em { font-style: italic; color: var(--burg); }
+.modal p { font-size: 12px; color: var(--mid); margin-bottom: 22px; }
+.modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-field { margin-bottom: 14px; }
+.form-field label { display: block; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--mid); margin-bottom: 6px; }
+.form-field input, .form-field select { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--dark); outline: none; transition: border-color .2s; }
+.form-field input:focus, .form-field select:focus { border-color: var(--burg); }
+.modal-btns { display: flex; gap: 10px; margin-top: 20px; }
+.btn-primary { flex: 1; padding: 12px; background: var(--burg); border: none; border-radius: 8px; color: white; font-family: 'DM Sans', sans-serif; font-size: 12px; letter-spacing: 1px; cursor: pointer; transition: background .2s; }
+.btn-primary:hover { background: var(--burg-dark); }
+.btn-cancel { padding: 12px 18px; background: none; border: 1px solid var(--border); border-radius: 8px; color: var(--mid); font-family: 'DM Sans', sans-serif; font-size: 12px; cursor: pointer; transition: all .2s; }
+.btn-cancel:hover { border-color: var(--burg); color: var(--burg); }
+
+/* ── CLIENT SCREEN ── */
+.client-hero { background: #1E1A14; padding: 22px 32px; position: relative; overflow: hidden; flex-shrink: 0; }
+.client-hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 85% 50%, rgba(107,122,62,0.12), transparent 55%); pointer-events: none; }
+.client-hero-inner { max-width: 1060px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; position: relative; }
+.client-hero h1 { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 400; color: var(--cream); }
+.client-hero h1 em { font-style: italic; color: var(--olive-light); }
+.client-hero-sub { font-size: 11px; letter-spacing: 2px; color: rgba(255,255,255,0.35); text-transform: uppercase; margin-top: 3px; }
+.back-btn { background: none; border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; padding: 7px 14px; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.4); cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all .2s; }
+.back-btn:hover { border-color: rgba(255,255,255,0.4); color: var(--cream); }
+.tabs-bar { background: white; border-bottom: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,0.04); flex-shrink: 0; position: sticky; top: 0; z-index: 40; }
+.tabs { display: flex; max-width: 1060px; margin: 0 auto; overflow-x: auto; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab { padding: 15px 20px; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; font-weight: 500; color: var(--mid); cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; transition: all .2s; }
+.tab:hover { color: var(--burg); }
+.tab.active { color: var(--burg); border-bottom-color: var(--burg); }
+.client-content { max-width: 1060px; margin: 0 auto; padding: 30px 24px 60px; flex: 1; }
+.cpanel { display: none; }
+.cpanel.active { display: block; }
+
+/* ── TABLES ── */
+.section-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 400; margin-bottom: 3px; }
+.section-title em { font-style: italic; color: var(--burg); }
+.section-sub { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--mid); margin-bottom: 22px; }
+.mini-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px,1fr)); gap: 12px; margin-bottom: 22px; }
+.mini-card { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 14px; text-align: center; border-top: 3px solid var(--burg); }
+.mini-card:nth-child(2) { border-top-color: var(--olive); }
+.mini-card:nth-child(3) { border-top-color: var(--olive); }
+.mini-card:nth-child(4) { border-top-color: var(--navy); }
+.mini-num { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 600; color: var(--dark); }
+.mini-num.green { color: #4A7A30; }
+.mini-num.red { color: var(--burg); }
+.mini-lbl { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--mid); margin-top: 2px; }
+.tbl-wrap { background: white; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 2px 12px rgba(0,0,0,0.04); margin-bottom: 16px; overflow-x: auto; }
+tbody tr:nth-child(even) { background: #FAF7F2; }
+tbody tr:hover { background: #FBF0EA; transition: background .15s; }
+tbody td { padding: 10px 13px; font-size: 13px; border-bottom: 1px solid var(--border); vertical-align: middle; white-space: normal; word-break: break-word; }
+.section-cell { background: var(--burg) !important; color: white !important; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; font-weight: 600; padding: 7px 13px; }
+.total-row td { background: linear-gradient(135deg, #EDE0D8, #E8D4CC) !important; font-weight: 600; font-size: 13px; border-top: 2px solid var(--burg); }
+
+input[type="text"], input[type="number"], input[type="email"], select {
+  font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--dark);
+  background: transparent; border: none; border-bottom: 1px solid transparent;
+  padding: 2px 3px; width: 100%; outline: none; transition: all .15s;
+  min-width: 0;
+}
+input:focus, select:focus { border-bottom-color: var(--burg); background: #FBF0EA; border-radius: 3px 3px 0 0; }
+textarea.auto-expand {
+  font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--dark);
+  background: transparent; border: none; border-bottom: 1px solid transparent;
+  padding: 2px 3px; width: 100%; outline: none; transition: all .15s;
+  resize: none; overflow: hidden; min-height: 22px; line-height: 1.5;
+  display: block;
+}
+textarea.auto-expand:focus { border-bottom-color: var(--burg); background: #FBF0EA; border-radius: 3px 3px 0 0; }
+table { width: 100%; border-collapse: collapse; min-width: 500px; table-layout: fixed; }
+thead th { padding: 11px 13px; text-align: left; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--dark); font-weight: 500; border-bottom: 1px solid var(--border); white-space: nowrap; overflow: hidden; }
+thead tr { background: linear-gradient(135deg, #EDE0D8, #E8D4CC); }
+
+.btn-add-row { margin-top: 10px; padding: 8px 18px; background: none; border: 1.5px dashed var(--burg); border-radius: 7px; color: var(--burg); font-family: 'DM Sans', sans-serif; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: background .2s; }
+.btn-add-row:hover { background: var(--burg-light); }
+.save-indicator { font-size: 11px; color: var(--olive); letter-spacing: 1px; margin-left: 12px; opacity: 0; transition: opacity .3s; }
+.save-indicator.show { opacity: 1; }
+
+/* ── MESSAGES ── */
+.msg-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--burg); color: white; border-radius: 10px;
+  font-size: 10px; font-weight: 700; min-width: 18px; height: 18px;
+  padding: 0 5px; margin-left: 4px; vertical-align: middle;
+}
+.chat-wrap {
+  background: white; border: 1px solid var(--border); border-radius: 14px;
+  overflow: hidden; display: flex; flex-direction: column; height: 560px;
+}
+.chat-messages {
+  flex: 1; overflow-y: auto; padding: 20px;
+  display: flex; flex-direction: column; gap: 10px;
+  background: #F8F4F0;
+}
+.chat-loading { text-align: center; color: var(--mid); font-style: italic; font-size: 13px; margin: auto; }
+.chat-day-label {
+  text-align: center; font-size: 10px; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--mid); margin: 8px 0;
+}
+.bubble-wrap { display: flex; flex-direction: column; max-width: 68%; }
+.bubble-wrap.me { align-self: flex-end; align-items: flex-end; }
+.bubble-wrap.them { align-self: flex-start; align-items: flex-start; }
+.bubble-sender { font-size: 10px; letter-spacing: 1px; color: var(--mid); margin-bottom: 3px; text-transform: uppercase; }
+.bubble {
+  padding: 11px 15px; border-radius: 18px; font-size: 13px;
+  line-height: 1.5; max-width: 100%; word-break: break-word;
+}
+.bubble.me {
+  background: var(--burg); color: white;
+  border-bottom-right-radius: 4px;
+}
+.bubble.them {
+  background: white; color: var(--dark);
+  border: 1px solid var(--border);
+  border-bottom-left-radius: 4px;
+}
+.bubble-time { font-size: 10px; color: var(--mid); margin-top: 3px; }
+.chat-input-wrap {
+  display: flex; gap: 10px; align-items: flex-end;
+  padding: 14px 16px; border-top: 1px solid var(--border);
+  background: white;
+}
+.chat-input {
+  flex: 1; padding: 10px 14px;
+  border: 1px solid var(--border) !important; border-radius: 20px !important;
+  font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--dark);
+  outline: none; resize: none; max-height: 120px; overflow-y: auto;
+  line-height: 1.5; background: var(--sand) !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+.chat-input:focus { border-color: var(--burg) !important; background: white !important; border-radius: 20px !important; }
+.chat-send {
+  padding: 10px 20px; background: var(--burg); border: none;
+  border-radius: 20px; color: white; font-family: 'DM Sans', sans-serif;
+  font-size: 12px; font-weight: 500; cursor: pointer; transition: background .2s;
+  white-space: nowrap; flex-shrink: 0;
+}
+.chat-send:hover { background: var(--burg-dark); }
+.chat-empty { text-align: center; color: var(--mid); font-size: 13px; font-style: italic; margin: auto; padding: 40px 20px; }
+
+/* ── RESEARCH ── */
+.research-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+.research-cats { display: flex; gap: 8px; flex-wrap: wrap; }
+.research-cat-btn { padding: 8px 16px; border: 1.5px solid var(--border); border-radius: 20px; background: none; font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--mid); cursor: pointer; transition: all .15s; }
+.research-cat-btn:hover { border-color: var(--burg); color: var(--burg); }
+.research-cat-btn.active { background: var(--burg); border-color: var(--burg); color: white; font-weight: 500; }
+.research-filters { display: flex; gap: 10px; flex-wrap: wrap; }
+.research-filters select { padding: 7px 12px; border: 1px solid var(--border); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--dark); outline: none; cursor: pointer; background: white; }
+.research-filters select:focus { border-color: var(--burg); }
+.research-section { margin-bottom: 32px; }
+.research-section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.research-section-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 400; color: var(--dark); }
+.research-section-title em { font-style: italic; color: var(--burg); }
+.research-del-cat { padding: 5px 10px; background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--mid); font-family: 'DM Sans', sans-serif; font-size: 11px; cursor: pointer; transition: all .15s; }
+.research-del-cat:hover { border-color: var(--burg); color: var(--burg); }
+.research-add-btn { padding: 6px 14px; background: none; border: 1px solid var(--burg); border-radius: 6px; color: var(--burg); font-family: 'DM Sans', sans-serif; font-size: 11px; letter-spacing: 1px; cursor: pointer; transition: background .15s; }
+.research-add-btn:hover { background: var(--burg-light); }
+.research-hidden { display: none !important; }
+
+.notes-layout { display: grid; grid-template-columns: 220px 1fr; gap: 20px; min-height: 500px; }
+.notes-sidebar { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+.notes-sidebar-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--mid); margin-bottom: 12px; }
+.notes-section-btn {
+  width: 100%; text-align: left; padding: 10px 12px;
+  background: none; border: none; border-radius: 8px;
+  font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--dark);
+  cursor: grab; transition: all .15s; margin-bottom: 4px;
+  display: flex; align-items: center; gap: 8px;
+}
+.notes-section-btn:hover { background: var(--sand); }
+.notes-section-btn.active { background: var(--burg-light); color: var(--burg); font-weight: 500; }
+.notes-section-btn.dragging { opacity: 0.4; cursor: grabbing; }
+.notes-section-btn.drag-over { border-top: 2px solid var(--burg); }
+.drag-handle { color: var(--border); font-size: 13px; cursor: grab; flex-shrink: 0; }
+.notes-section-btn .del-section { opacity: 0; font-size: 11px; color: var(--mid); background: none; border: none; cursor: pointer; padding: 0 2px; margin-left: auto; flex-shrink: 0; }
+.notes-section-btn:hover .del-section { opacity: 1; }
+.btn-add-section { width: 100%; margin-top: 10px; padding: 9px; background: none; border: 1.5px dashed var(--border); border-radius: 8px; color: var(--mid); font-family: 'DM Sans', sans-serif; font-size: 11px; letter-spacing: 1px; cursor: pointer; transition: all .2s; }
+.btn-add-section:hover { border-color: var(--burg); color: var(--burg); }
+.notes-main { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; }
+.notes-section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding-bottom: 14px; border-bottom: 1px solid var(--border); gap: 12px; }
+.notes-section-title-input { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 400; color: var(--dark); border: none; outline: none; background: none; flex: 1; }
+.notes-section-title-input::placeholder { color: var(--border); }
+.notes-section-title-input:focus { border-bottom: 1px solid var(--burg); }
+.btn-add-note { padding: 8px 16px; background: var(--burg); border: none; border-radius: 7px; color: white; font-family: 'DM Sans', sans-serif; font-size: 11px; letter-spacing: 1px; cursor: pointer; white-space: nowrap; transition: background .2s; }
+.btn-add-note:hover { background: var(--burg-dark); }
+.notes-list { display: flex; flex-direction: column; gap: 12px; flex: 1; }
+.note-card { background: var(--sand); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; position: relative; }
+.note-card:hover .note-del { opacity: 1; }
+/* Rich text toolbar */
+.note-toolbar { display: flex; gap: 4px; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+.toolbar-btn { padding: 4px 8px; background: white; border: 1px solid var(--border); border-radius: 4px; font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--dark); cursor: pointer; transition: all .15s; line-height: 1; }
+.toolbar-btn:hover { border-color: var(--burg); color: var(--burg); }
+.toolbar-btn.active { background: var(--burg-light); border-color: var(--burg); color: var(--burg); }
+.toolbar-sep { width: 1px; background: var(--border); margin: 0 4px; }
+.note-editor { min-height: 60px; outline: none; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--dark); line-height: 1.7; }
+.note-editor:focus { outline: none; }
+.note-editor ul { padding-left: 20px; }
+.note-editor ol { padding-left: 20px; }
+.note-editor b, .note-editor strong { font-weight: 600; }
+.note-editor i, .note-editor em { font-style: italic; }
+.note-meta { font-size: 10px; color: var(--mid); letter-spacing: 1px; margin-top: 10px; }
+.note-del { position: absolute; top: 10px; right: 10px; background: none; border: none; color: var(--mid); cursor: pointer; font-size: 13px; opacity: 0; transition: opacity .2s; }
+.notes-empty { color: var(--mid); font-style: italic; font-size: 14px; text-align: center; padding: 60px 20px; }
+@media (max-width: 700px) { .notes-layout { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
 
-<!-- ── NAV ── -->
-<nav id="navbar">
-  <a href="#home" class="nav-logo"><em>Events</em> by Gaby</a>
-  <ul class="nav-links" id="nav-links">
-    <li><a href="#about">About</a></li>
-    <li><a href="#services">Services</a></li>
-    <li><a href="#portfolio">Portfolio</a></li>
-    <li><a href="#contact" class="nav-cta">Let's Talk</a></li>
-    <li><a href="/portal" style="color:var(--olive);border-bottom:1px solid var(--olive);padding-bottom:2px;letter-spacing:2px;font-size:11px;">Client Portal</a></li>
-  </ul>
-  <button class="nav-hamburger" id="hamburger" onclick="toggleNav()" aria-label="Menu">
-    <span></span><span></span><span></span>
-  </button>
-</nav>
+<!-- LOADING OVERLAY -->
+<div class="loading-overlay" id="loading">
+  <div class="loading-box"><div class="spinner"></div> Loading...</div>
+</div>
 
-<!-- ══════════════════════════════
-     HERO
-══════════════════════════════ -->
-<section id="home">
-  <div class="hero-left">
-    <div class="hero-eyebrow">
-      <div class="hero-eyebrow-line"></div>
-      <span>Dallas, TX · Wedding Planning</span>
+<!-- LOGIN -->
+<div class="screen active" id="screen-login">
+  <div class="login-box">
+    <div class="login-eyebrow">✦ Client Portal ✦</div>
+    <div class="login-logo"><em>Events</em> by Gaby</div>
+    <div class="login-tagline">Wedding &amp; Event Planning</div>
+    <div class="login-divider"></div>
+    <div class="login-card">
+      <h2>Welcome back</h2>
+      <p>Sign in to continue</p>
+      <div id="login-error" class="login-error">Incorrect username or password.</div>
+      <div class="field">
+        <label>Username</label>
+        <input type="text" id="inp-user" placeholder="Enter your username" autocomplete="username">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="inp-pass" placeholder="Enter your password" autocomplete="current-password">
+      </div>
+      <button class="btn-login" id="btn-login" onclick="doLogin()">Sign In &rarr;</button>
     </div>
+  </div>
+</div>
 
-    <h1 class="hero-h1">
-      Your wedding,
-      <em>beautifully</em>
-      orchestrated.
-    </h1>
-
-    <p class="hero-desc">
-      From first venue tour to final send-off, I handle every detail so you can be fully present on the most important day of your life.
-    </p>
-
-    <div class="hero-actions">
-      <a href="#contact" class="btn-primary">Start Planning</a>
-      <a href="#services" class="btn-ghost">View Services</a>
+<!-- PLANNER DASHBOARD -->
+<div class="screen" id="screen-planner">
+  <div class="top-bar">
+    <div class="top-bar-brand"><em>Events</em> by Gaby</div>
+    <div class="top-bar-right">
+      <span class="top-bar-user" id="planner-name">Gaby Lemus</span>
+      <button class="btn-sm" onclick="doLogout()">Sign Out</button>
     </div>
+  </div>
+  <div class="dashboard">
+    <div class="dash-title">Your <em>Dashboard</em></div>
+    <div class="dash-sub">Manage all your clients and events</div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-num" id="stat-clients">0</div><div class="stat-label">Active Clients</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-weddings">0</div><div class="stat-label">Upcoming Weddings</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-weeks">—</div><div class="stat-label">Weeks to Next</div></div>
+      <div class="stat-card"><div class="stat-num">✦</div><div class="stat-label">Est. 2026</div></div>
+    </div>
+    <div class="section-row-label">Active Clients</div>
+    <div class="clients-grid" id="clients-grid"></div>
+    <button class="btn-add" onclick="openModal()">+ Add New Client</button>
+  </div>
+</div>
 
-    <div class="hero-stats">
+<!-- ADD CLIENT MODAL -->
+<div class="overlay" id="modal">
+  <div class="modal">
+    <h3>New <em>Client</em></h3>
+    <p>Add a couple to your portal</p>
+    <div class="modal-grid">
+      <div class="form-field"><label>Partner 1</label><input type="text" id="m-p1" placeholder="e.g. Raquel"></div>
+      <div class="form-field"><label>Partner 2</label><input type="text" id="m-p2" placeholder="e.g. Kyle"></div>
+      <div class="form-field"><label>Wedding Date</label><input type="text" id="m-date" placeholder="e.g. Dec 19, 2026"></div>
+      <div class="form-field"><label>Budget</label><input type="text" id="m-budget" placeholder="e.g. $12,000"></div>
+      <div class="form-field"><label>Client Username</label><input type="text" id="m-user" placeholder="e.g. raquel"></div>
+      <div class="form-field"><label>Client Password</label><input type="text" id="m-pass" placeholder="e.g. welcome2026"></div>
+      <div class="form-field"><label>Venue</label><input type="text" id="m-venue" placeholder="Venue name"></div>
+      <div class="form-field"><label>Client Name</label><input type="text" id="m-name" placeholder="Full name"></div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-primary" onclick="addClient()">Create Client &rarr;</button>
+    </div>
+  </div>
+</div>
+
+<!-- CLIENT SCREEN -->
+<div class="screen" id="screen-client">
+  <div class="client-hero">
+    <div class="client-hero-inner">
       <div>
-        <div class="hero-stat-num">100%</div>
-        <div class="hero-stat-label">Heart & Soul</div>
+        <h1 id="client-title"><em>Loading...</em></h1>
+        <div class="client-hero-sub" id="client-sub"></div>
       </div>
-      <div>
-        <div class="hero-stat-num">Dallas</div>
-        <div class="hero-stat-label">Based & Beyond</div>
-      </div>
-      <div>
-        <div class="hero-stat-num">✦</div>
-        <div class="hero-stat-label">Est. 2026</div>
-      </div>
+      <button class="back-btn" id="back-btn" onclick="goBack()">← Back</button>
     </div>
   </div>
-
-  <div class="hero-right">
-    <div class="hero-geo">
-      <div class="shape shape-1"></div>
-      <div class="shape shape-2"></div>
-      <div class="shape shape-3"></div>
-      <div class="shape shape-4"></div>
-      <div class="shape shape-5"></div>
-      <div class="shape shape-6"></div>
-    </div>
-    <div class="hero-badge">
-      <div class="hero-badge-text">Every detail,<br>by design.</div>
-      <div class="hero-badge-sub">Events by Gaby · 2026</div>
+  <div class="tabs-bar">
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('budget',this)">💰 Budget</div>
+      <div class="tab" onclick="switchTab('guests',this)">👥 Guests</div>
+      <div class="tab" onclick="switchTab('vendors',this)">🌸 Vendors</div>
+      <div class="tab" onclick="switchTab('notes',this)">📓 Notes</div>
+      <div class="tab" onclick="switchTab('research',this)">🔍 Research</div>
+      <div class="tab" onclick="switchTab('decor',this)">🌿 Décor</div>
+      <div class="tab" onclick="switchTab('timeline',this)">🕐 Timeline</div>
+      <div class="tab" id="tab-messages" onclick="switchTab('messages',this)">💬 Messages <span class="msg-badge" id="msg-badge" style="display:none"></span></div>
     </div>
   </div>
-</section>
+  <div class="client-content">
 
-<!-- ══════════════════════════════
-     ABOUT
-══════════════════════════════ -->
-<section id="about">
-  <div class="about-visual">
-    <div class="about-stripe"></div>
-    <div class="about-main-block">
-      <div class="about-initials">G</div>
-    </div>
-    <div class="about-accent-block">
-      <div class="about-accent-num">💍</div>
-      <div class="about-accent-label">Just Married</div>
-    </div>
-  </div>
-
-  <div class="about-right">
-    <div class="section-eyebrow">
-      <div class="section-eyebrow-line"></div>
-      <span>About Gaby</span>
-    </div>
-    <h2 class="section-h2" style="color:var(--cream)">Architect turned <em>wedding planner.</em></h2>
-    <p class="about-body">
-      Hi, I'm Gaby — a Dallas-based technical designer and newlywed with a passion for turning big ideas into flawlessly executed events. After planning my own wedding from start to finish, I discovered my true calling: making magic happen for other couples. My architecture background means I think in timelines, details, and spatial flow — so nothing falls through the cracks.
-    </p>
-    <div class="about-tags">
-      <span class="about-tag">Architecture Background</span>
-      <span class="about-tag">Project Management</span>
-      <span class="about-tag">Dallas · DFW</span>
-      <span class="about-tag">Detail-Obsessed</span>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════════════════════
-     SERVICES
-══════════════════════════════ -->
-<section id="services">
-  <div class="services-header">
-    <div>
-      <div class="section-eyebrow">
-        <div class="section-eyebrow-line"></div>
-        <span>What I Offer</span>
+    <!-- BUDGET -->
+    <div class="cpanel active" id="cpanel-budget">
+      <div class="section-title"><em>Budget</em> Tracker</div>
+      <div class="section-sub">Total budget · <span id="budget-total-label">$12,000</span></div>
+      <div class="mini-cards">
+        <div class="mini-card"><div class="mini-num" id="b-budget">$12,000</div><div class="mini-lbl">Budget</div></div>
+        <div class="mini-card"><div class="mini-num green" id="b-est">$0</div><div class="mini-lbl">Estimated</div></div>
+        <div class="mini-card"><div class="mini-num red" id="b-paid">$0</div><div class="mini-lbl">Paid</div></div>
+        <div class="mini-card"><div class="mini-num" id="b-rem">$0</div><div class="mini-lbl">Remaining</div></div>
       </div>
-      <h2 class="section-h2">Services & <em>Pricing</em></h2>
-    </div>
-    <p style="font-size:14px;color:var(--mid);max-width:300px;font-weight:300;line-height:1.6">Every package is fully customizable. Reach out to build something just for you.</p>
-  </div>
-
-  <div class="services-grid">
-    <!-- Day-of -->
-    <div class="service-card fade-up">
-      <div class="service-card-top olive"></div>
-      <div class="service-card-body">
-        <div class="service-icon olive">🌿</div>
-        <div class="service-name">Day-of Coordination</div>
-        <div class="service-desc">You've planned everything — I make sure it all runs perfectly on the day. Vendor management, timeline execution, and keeping every moment on track.</div>
-        <div class="service-price">$800<span style="font-size:14px;font-weight:400">+</span></div>
-        <div class="service-price-label">Starting price</div>
-        <ul class="service-includes">
-          <li>1 planning meeting + final walkthrough</li>
-          <li>Full day-of coordination (up to 10 hrs)</li>
-          <li>Vendor point of contact</li>
-          <li>Timeline creation & management</li>
-        </ul>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Category</th><th>Estimated</th><th>Actual</th><th>Paid</th><th>Balance</th><th>Notes</th><th></th></tr></thead>
+          <tbody id="budget-body"></tbody>
+        </table>
       </div>
+      <button class="btn-add-row" onclick="addBudgetRow()">+ Add Category</button>
+      <span class="save-indicator" id="budget-saved">✓ Saved</span>
     </div>
 
-    <!-- Partial -->
-    <div class="service-card fade-up">
-      <div class="service-card-top burg"></div>
-      <div class="service-card-body">
-        <div class="service-icon burg">🌸</div>
-        <div class="service-name">Partial Planning</div>
-        <div class="service-desc">You've started but need an expert to take it over the finish line. I step in wherever you need and make sure nothing is missed.</div>
-        <div class="service-price">$1,800<span style="font-size:14px;font-weight:400">+</span></div>
-        <div class="service-price-label">Starting price</div>
-        <ul class="service-includes">
-          <li>Up to 5 planning sessions</li>
-          <li>Vendor recommendations & reviews</li>
-          <li>Budget tracking & management</li>
-          <li>Full day-of coordination</li>
-        </ul>
+    <!-- GUESTS -->
+    <div class="cpanel" id="cpanel-guests">
+      <div class="section-title"><em>Guest</em> List</div>
+      <div class="section-sub">Track RSVPs</div>
+      <div class="mini-cards">
+        <div class="mini-card"><div class="mini-num" id="g-total">0</div><div class="mini-lbl">Invited</div></div>
+        <div class="mini-card"><div class="mini-num green" id="g-conf">0</div><div class="mini-lbl">Confirmed</div></div>
+        <div class="mini-card"><div class="mini-num red" id="g-pend">0</div><div class="mini-lbl">Pending</div></div>
+        <div class="mini-card"><div class="mini-num" id="g-decl">0</div><div class="mini-lbl">Declined</div></div>
       </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>First Name</th><th>Last Name</th><th>Email</th><th>RSVP</th><th># Guests</th><th>Table</th><th>Notes</th><th></th></tr></thead>
+          <tbody id="guests-body"></tbody>
+        </table>
+      </div>
+      <button class="btn-add-row" onclick="addGuestRow()">+ Add Guest</button>
+      <span class="save-indicator" id="guests-saved">✓ Saved</span>
     </div>
 
-    <!-- Full -->
-    <div class="service-card fade-up">
-      <div class="service-card-top navy"></div>
-      <div class="service-card-body">
-        <div class="service-icon navy">✨</div>
-        <div class="service-name">Full Planning</div>
-        <div class="service-desc">From engagement to send-off, I handle everything. You enjoy the journey while I bring your vision to life with every beautiful detail.</div>
-        <div class="service-price">$3,500<span style="font-size:14px;font-weight:400">+</span></div>
-        <div class="service-price-label">Starting price</div>
-        <ul class="service-includes">
-          <li>Unlimited planning sessions</li>
-          <li>Venue & vendor sourcing</li>
-          <li>Design concept & mood boards</li>
-          <li>Budget & guest list management</li>
-          <li>Full day-of coordination</li>
-        </ul>
+    <!-- VENDORS -->
+    <div class="cpanel" id="cpanel-vendors">
+      <div class="section-title"><em>Vendor</em> Contacts</div>
+      <div class="section-sub">All booked &amp; prospective vendors</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Category</th><th>Vendor Name</th><th>Contact</th><th>Phone</th><th>Quoted</th><th>Deposit</th><th>Status</th><th>Notes</th><th></th></tr></thead>
+          <tbody id="vendors-body"></tbody>
+        </table>
       </div>
+      <button class="btn-add-row" onclick="addVendorRow()">+ Add Vendor</button>
+      <span class="save-indicator" id="vendors-saved">✓ Saved</span>
     </div>
-  </div>
-</section>
 
-<!-- ══════════════════════════════
-     PORTFOLIO
-══════════════════════════════ -->
-<section id="portfolio">
-  <div class="portfolio-header">
-    <div>
-      <div class="section-eyebrow">
-        <div class="section-eyebrow-line"></div>
-        <span>Our Work</span>
+    <!-- TIMELINE -->
+    <div class="cpanel" id="cpanel-timeline">
+      <div class="section-title"><em>Wedding Day</em> Timeline</div>
+      <div class="section-sub" id="timeline-date">December 19, 2026</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Time</th><th>End</th><th>Event</th><th>Responsible</th><th>Notes</th><th></th></tr></thead>
+          <tbody id="timeline-body"></tbody>
+        </table>
       </div>
-      <h2 class="section-h2">Portfolio & <em>Gallery</em></h2>
+      <button class="btn-add-row" onclick="addTimelineRow()">+ Add Event</button>
+      <span class="save-indicator" id="timeline-saved">✓ Saved</span>
     </div>
-    <p style="font-size:14px;color:var(--mid);max-width:280px;font-weight:300;line-height:1.6">Photos coming soon as we build our portfolio of beautiful events.</p>
-  </div>
 
-  <div class="portfolio-grid">
-    <div class="portfolio-item">
-      <div class="portfolio-bg p1"></div>
-      <div class="portfolio-geo">
-        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="50" cy="50" r="40" stroke="white" stroke-width="1"/>
-          <rect x="20" y="20" width="60" height="60" stroke="white" stroke-width="1" transform="rotate(15 50 50)"/>
-        </svg>
+    <!-- DECOR -->
+    <div class="cpanel" id="cpanel-decor">
+      <div class="section-title"><em>Décor</em> Inventory</div>
+      <div class="section-sub">Every detail tracked</div>
+      <div class="mini-cards">
+        <div class="mini-card"><div class="mini-num" id="d-count">0</div><div class="mini-lbl">Items</div></div>
+        <div class="mini-card"><div class="mini-num green" id="d-total">$0</div><div class="mini-lbl">Est. Total</div></div>
       </div>
-      <div class="portfolio-coming">
-        <div class="portfolio-coming-icon">📸</div>
-        <div class="portfolio-coming-text">Photos Coming Soon</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Item</th><th>Qty</th><th>Unit Cost</th><th>Total</th><th>Source</th><th>Status</th><th>Notes</th><th></th></tr></thead>
+          <tbody id="decor-body"></tbody>
+        </table>
       </div>
-      <div class="portfolio-overlay"><div class="portfolio-label">Coming Soon</div></div>
+      <button class="btn-add-row" onclick="addDecorRow()">+ Add Item</button>
+      <span class="save-indicator" id="decor-saved">✓ Saved</span>
     </div>
-    <div class="portfolio-item">
-      <div class="portfolio-bg p2"></div>
-      <div class="portfolio-geo">
-        <svg viewBox="0 0 100 100" fill="none"><polygon points="50,10 90,90 10,90" stroke="white" stroke-width="1"/></svg>
-      </div>
-      <div class="portfolio-coming"><div class="portfolio-coming-icon">✨</div><div class="portfolio-coming-text">Your Wedding Here</div></div>
-      <div class="portfolio-overlay"><div class="portfolio-label">Your Wedding Here</div></div>
-    </div>
-    <div class="portfolio-item">
-      <div class="portfolio-bg p3"></div>
-      <div class="portfolio-geo">
-        <svg viewBox="0 0 100 100" fill="none"><rect x="20" y="20" width="60" height="60" stroke="white" stroke-width="1" transform="rotate(45 50 50)"/></svg>
-      </div>
-      <div class="portfolio-coming"><div class="portfolio-coming-icon">🌸</div><div class="portfolio-coming-text">Gallery Growing</div></div>
-      <div class="portfolio-overlay"><div class="portfolio-label">Gallery Growing</div></div>
-    </div>
-    <div class="portfolio-item">
-      <div class="portfolio-bg p4"></div>
-      <div class="portfolio-geo">
-        <svg viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="35" stroke="white" stroke-width="1"/><circle cx="50" cy="50" r="20" stroke="white" stroke-width="1"/></svg>
-      </div>
-      <div class="portfolio-coming"><div class="portfolio-coming-icon">💐</div><div class="portfolio-coming-text">Florals & Details</div></div>
-      <div class="portfolio-overlay"><div class="portfolio-label">Florals & Details</div></div>
-    </div>
-  </div>
-</section>
 
-<!-- ══════════════════════════════
-     CONTACT
-══════════════════════════════ -->
-<section id="contact">
-  <div class="contact-inner">
-    <div class="section-eyebrow contact-eyebrow">
-      <div class="section-eyebrow-line"></div>
-      <span>Get in Touch</span>
-    </div>
-    <h2 class="contact-h2">Let's plan something <em>beautiful.</em></h2>
-    <p class="contact-desc">Tell me about your vision and I'll get back to you within 24 hours. Every great wedding starts with a conversation.</p>
-
-    <div class="contact-form">
-      <div class="contact-row">
-        <div class="form-field">
-          <label>Your Name</label>
-          <input type="text" placeholder="First & last name">
+    <!-- NOTES -->
+    <div class="cpanel" id="cpanel-notes">
+      <div class="section-title"><em>Notes</em></div>
+      <div class="section-sub">Shared notebook — drag sections to reorder</div>
+      <div class="notes-layout">
+        <div class="notes-sidebar">
+          <div class="notes-sidebar-label">Sections</div>
+          <div id="notes-sections-list"></div>
+          <button class="btn-add-section" onclick="addNoteSection()">+ Add Section</button>
         </div>
-        <div class="form-field">
-          <label>Partner's Name</label>
-          <input type="text" placeholder="First & last name">
+        <div class="notes-main">
+          <div id="notes-content-area">
+            <div class="notes-empty">Select a section to view notes</div>
+          </div>
         </div>
       </div>
-      <div class="contact-row">
-        <div class="form-field">
-          <label>Email</label>
-          <input type="email" placeholder="your@email.com">
-        </div>
-        <div class="form-field">
-          <label>Wedding Date</label>
-          <input type="text" placeholder="Month, Year or TBD">
-        </div>
-      </div>
-      <div class="contact-row">
-        <div class="form-field">
-          <label>Estimated Guest Count</label>
-          <input type="text" placeholder="e.g. 50–75 guests">
-        </div>
-        <div class="form-field">
-          <label>Service Interest</label>
-          <select>
-            <option value="" disabled selected>Select a package</option>
-            <option>Day-of Coordination</option>
-            <option>Partial Planning</option>
-            <option>Full Planning</option>
-            <option>Not sure yet</option>
+      <span class="save-indicator" id="notes-saved">✓ Saved</span>
+    </div>
+
+    <!-- RESEARCH -->
+    <div class="cpanel" id="cpanel-research">
+      <div class="section-title"><em>Research</em></div>
+      <div class="section-sub">Compare vendors by category — filter by price or rating</div>
+
+      <!-- Category tabs + filters -->
+      <div class="research-header">
+        <div class="research-cats" id="research-cats"></div>
+        <div class="research-filters">
+          <select id="filter-rating" onchange="applyResearchFilters()">
+            <option value="">All Ratings</option>
+            <option value="5">⭐⭐⭐⭐⭐</option>
+            <option value="4">⭐⭐⭐⭐+</option>
+            <option value="3">⭐⭐⭐+</option>
+          </select>
+          <select id="filter-sort" onchange="applyResearchFilters()">
+            <option value="">Sort by...</option>
+            <option value="price-asc">Price: Low → High</option>
+            <option value="price-desc">Price: High → Low</option>
+            <option value="rating-desc">Rating: Best First</option>
           </select>
         </div>
       </div>
-      <div class="form-field">
-        <label>Tell me about your vision</label>
-        <textarea placeholder="Venue, vibe, anything you're dreaming of..."></textarea>
-      </div>
-      <button class="btn-submit" onclick="handleSubmit(event)">Send Message →</button>
-    </div>
-  </div>
-</section>
 
-<!-- ── FOOTER ── -->
-<footer>
-  <div class="footer-brand"><em>Events</em> by Gaby</div>
-  <div class="footer-copy">© 2026 Events by Gaby · Dallas, TX</div>
-  <div class="footer-links">
-    <a href="#home">Home</a>
-    <a href="#about">About</a>
-    <a href="#services">Services</a>
-    <a href="#contact">Contact</a>
+      <div id="research-content"></div>
+      <button class="btn-add-section" style="margin-top:16px" onclick="addResearchCategory()">+ Add Category</button>
+      <span class="save-indicator" id="research-saved">✓ Saved</span>
+    </div>
+
+    <!-- MESSAGES -->
+    <div class="cpanel" id="cpanel-messages">
+      <div class="section-title"><em>Messages</em></div>
+      <div class="section-sub" id="chat-sub">Chat with your planner</div>
+      <div class="chat-wrap">
+        <div class="chat-messages" id="chat-messages">
+          <div class="chat-loading">Loading messages...</div>
+        </div>
+        <div class="chat-input-wrap">
+          <textarea class="chat-input" id="chat-input" placeholder="Type a message..." rows="1"
+            oninput="autoExpand(this)"
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}"></textarea>
+          <button class="chat-send" onclick="sendMessage()">Send ↑</button>
+        </div>
+      </div>
+    </div>
+
   </div>
-</footer>
+</div>
 
 <script>
-  // ── NAV SCROLL ──
-  window.addEventListener('scroll', () => {
-    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 40);
-  });
+// ══════════════════════════════
+//  SUPABASE INIT
+// ══════════════════════════════
+const SUPABASE_URL = 'https://batygkonywublzyjlgaa.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhdHlna29ueXd1Ymx6eWpsZ2FhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3NTYwNjUsImV4cCI6MjA4OTMzMjA2NX0.tqpfGXH7vtPnG5EdOSiHVbboDhr2B4H7-rdO6feFC3k';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  // ── HAMBURGER ──
-  function toggleNav() {
-    document.getElementById('nav-links').classList.toggle('open');
+// ══════════════════════════════
+//  STATE
+// ══════════════════════════════
+let currentUser = null;
+let currentClient = null;
+let saveTimers = {};
+
+// ══════════════════════════════
+//  HELPERS
+// ══════════════════════════════
+const $ = id => document.getElementById(id);
+const fmt = n => '$'+(parseFloat(n)||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+function autoExpand(el) {
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
+}
+
+function ta(value, placeholder, onchange) {
+  return `<textarea class="auto-expand" placeholder="${placeholder}" onchange="${onchange}" oninput="autoExpand(this)">${value||''}</textarea>`;
+}
+
+function showLoading(msg='Loading...') {
+  $('loading').querySelector('.loading-box').innerHTML = `<div class="spinner"></div> ${msg}`;
+  $('loading').classList.add('show');
+}
+function hideLoading() { $('loading').classList.remove('show'); }
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  $(id).classList.add('active');
+}
+
+function showSaved(section) {
+  const el = $(`${section}-saved`);
+  if (!el) return;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2000);
+}
+
+function debounce(fn, section, delay=800) {
+  clearTimeout(saveTimers[section]);
+  saveTimers[section] = setTimeout(fn, delay);
+}
+
+function deleteBtn(onclick) {
+  return `<td><button onclick="${onclick}" style="background:none;border:none;color:#C0A090;cursor:pointer;font-size:14px;padding:2px 6px;" title="Delete">✕</button></td>`;
+}
+
+// ══════════════════════════════
+//  AUTH
+// ══════════════════════════════
+async function doLogin() {
+  const u = $('inp-user').value.trim().toLowerCase();
+  const p = $('inp-pass').value;
+  const err = $('login-error');
+  const btn = $('btn-login');
+
+  if (!u || !p) { err.textContent='Please enter your username and password.'; err.style.display='block'; return; }
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Signing in...';
+  err.style.display = 'none';
+
+  try {
+    const { data, error } = await sb.from('portal_users').select('*').eq('username', u).eq('password', p).single();
+    if (error || !data) {
+      err.textContent = 'Incorrect username or password.';
+      err.style.display = 'block';
+      btn.disabled = false;
+      btn.innerHTML = 'Sign In &rarr;';
+      return;
+    }
+    currentUser = data;
+    if (data.role === 'planner') {
+      $('planner-name').textContent = data.name;
+      showScreen('screen-planner');
+      await loadPlannerDashboard();
+    } else {
+      // find client record by username
+      const { data: clientData } = await sb.from('clients').select('*').eq('username', u).single();
+      if (clientData) {
+        $('back-btn').style.display = 'none';
+        await loadClientDashboard(clientData);
+        showScreen('screen-client');
+      }
+    }
+  } catch(e) {
+    err.textContent = 'Connection error. Please try again.';
+    err.style.display = 'block';
   }
-  document.querySelectorAll('.nav-links a').forEach(a => {
-    a.addEventListener('click', () => document.getElementById('nav-links').classList.remove('open'));
-  });
+  btn.disabled = false;
+  btn.innerHTML = 'Sign In &rarr;';
+}
 
-  // ── SCROLL ANIMATIONS ──
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-  }, { threshold: 0.15 });
-  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+$('inp-pass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+$('inp-user').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
 
-  // ── FORM ──
-  function handleSubmit(e) {
-    e.preventDefault();
-    const btn = e.target;
-    btn.textContent = '✓ Message Sent!';
-    btn.style.background = '#4A7A40';
-    setTimeout(() => { btn.textContent = 'Send Message →'; btn.style.background = ''; }, 3000);
+function doLogout() {
+  currentUser = null; currentClient = null;
+  $('inp-user').value = ''; $('inp-pass').value = '';
+  showScreen('screen-login');
+}
+
+function goBack() {
+  showScreen('screen-planner');
+  loadPlannerDashboard();
+}
+
+// ══════════════════════════════
+//  PLANNER DASHBOARD
+// ══════════════════════════════
+async function loadPlannerDashboard() {
+  showLoading('Loading dashboard...');
+  const { data: clients } = await sb.from('clients').select('*').order('created_at');
+  hideLoading();
+
+  $('stat-clients').textContent = clients?.length || 0;
+  $('stat-weddings').textContent = clients?.length || 0;
+
+  // weeks to next wedding
+  if (clients?.length) {
+    const dates = clients.map(c => new Date(c.date)).filter(d => !isNaN(d));
+    if (dates.length) {
+      const next = dates.sort((a,b)=>a-b)[0];
+      const weeks = Math.max(0, Math.round((next - new Date()) / (7*24*60*60*1000)));
+      $('stat-weeks').textContent = weeks;
+    }
   }
+
+  const grid = $('clients-grid');
+  grid.innerHTML = '';
+  (clients||[]).forEach(c => {
+    const div = document.createElement('div');
+    div.className = 'client-card';
+    div.onclick = async () => {
+      $('back-btn').style.display = '';
+      await loadClientDashboard(c);
+      showScreen('screen-client');
+    };
+    div.innerHTML = `
+      <div class="cc-header">
+        <div class="cc-names">${c.p1} &amp; ${c.p2}</div>
+        <div class="cc-date">${c.date||''}</div>
+      </div>
+      <div class="cc-body">
+        <div class="cc-prog-label"><span>Planning Progress</span><span>${c.progress||5}%</span></div>
+        <div class="prog-bar"><div class="prog-fill" style="width:${c.progress||5}%"></div></div>
+        <div class="cc-pills">
+          <span class="pill pill-green">Venue ✓</span>
+          <span class="pill pill-orange">Budget: ${c.budget||'TBD'}</span>
+          <span class="pill pill-burg">Active</span>
+        </div>
+      </div>`;
+    grid.appendChild(div);
+  });
+}
+
+// ══════════════════════════════
+//  ADD CLIENT
+// ══════════════════════════════
+function openModal() { $('modal').classList.add('open'); }
+function closeModal() { $('modal').classList.remove('open'); }
+
+async function addClient() {
+  const p1 = $('m-p1').value.trim();
+  const p2 = $('m-p2').value.trim();
+  const date = $('m-date').value.trim();
+  const budget = $('m-budget').value.trim();
+  const username = $('m-user').value.trim().toLowerCase();
+  const password = $('m-pass').value.trim();
+  const venue = $('m-venue').value.trim();
+  const name = $('m-name').value.trim();
+  if (!p1||!p2) { alert('Please enter both partner names.'); return; }
+
+  showLoading('Creating client...');
+  // create client record
+  const { data: client, error } = await sb.from('clients').insert({ p1, p2, date, budget, venue, username, progress: 5 }).select().single();
+  if (error) { hideLoading(); alert('Error creating client: ' + error.message); return; }
+
+  // create user login if username provided
+  if (username && password) {
+    await sb.from('portal_users').insert({ username, password, role: 'client', name: name||p1 });
+  }
+
+  // seed default vendors
+  const defaultVendors = [
+    {category:'Venue',vendor_name:venue||'',status:'Booked'},
+    {category:'Catering',status:'Searching'},{category:'Photography',status:'Searching'},
+    {category:'Florals / Decor',status:'Searching'},{category:'Hair & Makeup',status:'Searching'},
+    {category:'DJ / Music',status:'Searching'},{category:'Wedding Cake',status:'Searching'},
+    {category:'Officiant',status:'TBD'},{category:'Transportation',status:'TBD'},
+  ];
+  await sb.from('vendors').insert(defaultVendors.map((v,i) => ({...v, client_id: client.id, sort_order: i})));
+
+  hideLoading();
+  closeModal();
+  ['m-p1','m-p2','m-date','m-budget','m-user','m-pass','m-venue','m-name'].forEach(id => $(id).value='');
+  await loadPlannerDashboard();
+}
+
+// ══════════════════════════════
+//  LOAD CLIENT DASHBOARD
+// ══════════════════════════════
+async function loadClientDashboard(client) {
+  currentClient = client;
+  $('client-title').innerHTML = `<em>${client.p1} &amp; ${client.p2}'s</em> Wedding`;
+  $('client-sub').textContent = `${client.date||''} · ${client.venue||''}`;
+  $('timeline-date').textContent = client.date || 'Wedding Day';
+
+  // reset tabs
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', i===0));
+  document.querySelectorAll('.cpanel').forEach((p,i) => p.classList.toggle('active', i===0));
+
+  showLoading('Loading wedding details...');
+  await Promise.all([loadBudget(), loadGuests(), loadVendors(), loadTimeline(), loadDecor(), loadNotes(), loadResearch()]);
+  hideLoading();
+  setTimeout(() => document.querySelectorAll('textarea.auto-expand').forEach(t => autoExpand(t)), 50);
+  checkUnread();
+}
+
+function switchTab(id, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.cpanel').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  $('cpanel-'+id).classList.add('active');
+  setTimeout(() => document.querySelectorAll(`#cpanel-${id} textarea.auto-expand`).forEach(t => autoExpand(t)), 20);
+  if (id === 'messages') {
+    loadMessages();
+  }
+}
+
+// ══════════════════════════════
+//  BUDGET
+// ══════════════════════════════
+async function loadBudget() {
+  const { data } = await sb.from('budget').select('*').eq('client_id', currentClient.id).order('sort_order').order('created_at');
+  $('budget-body').innerHTML = '';
+
+  // if empty, seed defaults
+  if (!data || data.length === 0) {
+    const defaults = [
+      {cat:'Venue',est:1500},{cat:'Catering / Food',est:3000},{cat:'Bar / Beverages',est:800},
+      {cat:'Photography',est:1800},{cat:'Videography',est:0},{cat:'Florals / Decor',est:900},
+      {cat:'Wedding Dress',est:600},{cat:'Groom Attire',est:300},{cat:'Hair & Makeup',est:500},
+      {cat:'DJ / Music',est:700},{cat:'Wedding Cake',est:300},{cat:'Invitations',est:150},
+      {cat:'Officiant',est:200},{cat:'Transportation',est:250},{cat:'Favors / Gifts',est:200},
+      {cat:'Rehearsal Dinner',est:400},{cat:'Miscellaneous',est:400}
+    ];
+    const rows = defaults.map((d,i) => ({client_id:currentClient.id, category:d.cat, estimated:d.est, sort_order:i}));
+    const { data: seeded } = await sb.from('budget').insert(rows).select();
+    (seeded||[]).forEach(r => renderBudgetRow(r));
+  } else {
+    data.forEach(r => renderBudgetRow(r));
+  }
+  calcBudget();
+}
+
+function renderBudgetRow(r) {
+  const tr = document.createElement('tr');
+  tr.dataset.id = r.id;
+  tr.innerHTML = `
+    <td>${ta(r.category,'Category',`saveBudgetRow('${r.id}',this.closest('tr'))`)}</td>
+    <td><input type="number" value="${r.estimated||0}" step="0.01" onchange="saveBudgetRow('${r.id}',this.closest('tr'))"></td>
+    <td><input type="number" value="${r.actual||0}" step="0.01" onchange="saveBudgetRow('${r.id}',this.closest('tr'))"></td>
+    <td><input type="number" value="${r.paid||0}" step="0.01" onchange="saveBudgetRow('${r.id}',this.closest('tr'))"></td>
+    <td class="bal-cell">${fmt((r.actual||r.estimated||0)-(r.paid||0))}</td>
+    <td>${ta(r.notes,'Notes',`saveBudgetRow('${r.id}',this.closest('tr'))`)}</td>
+    ${deleteBtn(`deleteBudgetRow('${r.id}',this.closest('tr'))`)}`;
+  $('budget-body').appendChild(tr);
+  setTimeout(() => tr.querySelectorAll('textarea').forEach(t => autoExpand(t)), 10);
+}
+
+async function saveBudgetRow(id, tr) {
+  const nums = tr.querySelectorAll('input[type=number]');
+  const texts = tr.querySelectorAll('textarea');
+  const payload = { category:texts[0]?.value||'', estimated:parseFloat(nums[0]?.value)||0, actual:parseFloat(nums[1]?.value)||0, paid:parseFloat(nums[2]?.value)||0, notes:texts[1]?.value||'' };
+  const bal = tr.querySelector('.bal-cell');
+  if (bal) bal.textContent = fmt((payload.actual||payload.estimated)-(payload.paid));
+  debounce(async () => {
+    await sb.from('budget').update(payload).eq('id', id);
+    showSaved('budget');
+    calcBudget();
+  }, 'budget-'+id);
+}
+
+async function deleteBudgetRow(id, tr) {
+  tr.remove();
+  await sb.from('budget').delete().eq('id', id);
+  calcBudget();
+}
+
+async function addBudgetRow() {
+  const { data } = await sb.from('budget').insert({ client_id: currentClient.id, category:'', estimated:0, actual:0, paid:0, sort_order:999 }).select().single();
+  if (data) { renderBudgetRow(data); calcBudget(); }
+}
+
+function calcBudget() {
+  let est=0, paid=0;
+  document.querySelectorAll('#budget-body tr').forEach(tr => {
+    const inp = tr.querySelectorAll('input[type=number]');
+    est += parseFloat(inp[0]?.value)||0;
+    paid += parseFloat(inp[2]?.value)||0;
+  });
+  const budgetAmt = parseFloat((currentClient?.budget||'12000').replace(/[^0-9.]/g,''))||12000;
+  $('b-est').textContent = fmt(est);
+  $('b-paid').textContent = fmt(paid);
+  $('b-rem').textContent = fmt(budgetAmt - est);
+  $('b-budget').textContent = fmt(budgetAmt);
+}
+
+// ══════════════════════════════
+//  GUESTS
+// ══════════════════════════════
+async function loadGuests() {
+  const { data } = await sb.from('guests').select('*').eq('client_id', currentClient.id).order('created_at');
+  $('guests-body').innerHTML = '';
+  (data||[]).forEach(r => renderGuestRow(r));
+  calcGuests();
+}
+
+function renderGuestRow(r) {
+  const tr = document.createElement('tr');
+  tr.dataset.id = r.id;
+  const rsvpOpts = ['Pending','Confirmed','Declined'].map(v => `<option ${r.rsvp===v?'selected':''}>${v}</option>`).join('');
+  tr.innerHTML = `
+    <td><input type="text" value="${r.first_name||''}" placeholder="First name" onchange="saveGuestRow('${r.id}',this.closest('tr'))"></td>
+    <td><input type="text" value="${r.last_name||''}" placeholder="Last name" onchange="saveGuestRow('${r.id}',this.closest('tr'))"></td>
+    <td><input type="text" value="${r.email||''}" placeholder="Email" onchange="saveGuestRow('${r.id}',this.closest('tr'))"></td>
+    <td><select onchange="saveGuestRow('${r.id}',this.closest('tr'))">${rsvpOpts}</select></td>
+    <td><input type="number" value="${r.num_guests||1}" min="1" style="width:44px" onchange="saveGuestRow('${r.id}',this.closest('tr'))"></td>
+    <td><input type="text" value="${r.table_num||''}" placeholder="#" style="width:44px" onchange="saveGuestRow('${r.id}',this.closest('tr'))"></td>
+    <td>${ta(r.notes,'Notes',`saveGuestRow('${r.id}',this.closest('tr'))`)}</td>
+    ${deleteBtn(`deleteGuestRow('${r.id}',this.closest('tr'))`)}`;
+  $('guests-body').appendChild(tr);
+  setTimeout(() => tr.querySelectorAll('textarea').forEach(t => autoExpand(t)), 10);
+}
+
+async function saveGuestRow(id, tr) {
+  const inputs = tr.querySelectorAll('input, select');
+  const payload = { first_name:inputs[0].value, last_name:inputs[1].value, email:inputs[2].value, rsvp:inputs[3].value, num_guests:parseInt(inputs[4].value)||1, table_num:inputs[5].value, notes:inputs[6].value };
+  debounce(async () => {
+    await sb.from('guests').update(payload).eq('id', id);
+    showSaved('guests'); calcGuests();
+  }, 'guest-'+id);
+  calcGuests();
+}
+
+async function deleteGuestRow(id, tr) { tr.remove(); await sb.from('guests').delete().eq('id', id); calcGuests(); }
+
+async function addGuestRow() {
+  const { data } = await sb.from('guests').insert({ client_id: currentClient.id, rsvp:'Pending', num_guests:1 }).select().single();
+  if (data) { renderGuestRow(data); calcGuests(); }
+}
+
+function calcGuests() {
+  let inv=0,conf=0,pend=0,decl=0;
+  document.querySelectorAll('#guests-body tr').forEach(tr => {
+    if (!tr.querySelectorAll('input')[0]?.value) return;
+    inv++;
+    const v = tr.querySelector('select')?.value;
+    if(v==='Confirmed') conf++;
+    else if(v==='Declined') decl++;
+    else pend++;
+  });
+  $('g-total').textContent=inv; $('g-conf').textContent=conf;
+  $('g-pend').textContent=pend; $('g-decl').textContent=decl;
+}
+
+// ══════════════════════════════
+//  VENDORS
+// ══════════════════════════════
+async function loadVendors() {
+  const { data } = await sb.from('vendors').select('*').eq('client_id', currentClient.id).order('sort_order').order('created_at');
+  $('vendors-body').innerHTML = '';
+  if (!data || data.length === 0) {
+    const defaults = [
+      {category:'Venue',vendor_name:currentClient.venue||'',status:'Booked'},
+      {category:'Catering',status:'Searching'},{category:'Photography',status:'Searching'},
+      {category:'Videography',status:'TBD'},{category:'Florals / Decor',status:'Searching'},
+      {category:'Hair & Makeup',status:'Searching'},{category:'DJ / Music',status:'Searching'},
+      {category:'Wedding Cake',status:'Searching'},{category:'Officiant',status:'TBD'},
+    ];
+    const rows = defaults.map((v,i) => ({...v, client_id:currentClient.id, sort_order:i}));
+    const { data: seeded } = await sb.from('vendors').insert(rows).select();
+    (seeded||[]).forEach(r => renderVendorRow(r));
+  } else {
+    data.forEach(r => renderVendorRow(r));
+  }
+}
+
+function renderVendorRow(r) {
+  const tr = document.createElement('tr');
+  tr.dataset.id = r.id;
+  const statOpts = ['Searching 🔍','Booked ✅','TBD','Cancelled'].map(v => `<option ${(r.status||'').includes(v.split(' ')[0])?'selected':''}>${v}</option>`).join('');
+  tr.innerHTML = `
+    <td>${ta(r.category,'Category',`saveVendorRow('${r.id}',this.closest('tr'))`)}</td>
+    <td>${ta(r.vendor_name,'Vendor name',`saveVendorRow('${r.id}',this.closest('tr'))`)}</td>
+    <td>${ta(r.contact,'Contact',`saveVendorRow('${r.id}',this.closest('tr'))`)}</td>
+    <td><input type="text" value="${r.phone||''}" placeholder="Phone" onchange="saveVendorRow('${r.id}',this.closest('tr'))"></td>
+    <td><input type="number" value="${r.quoted||0}" step="0.01" onchange="saveVendorRow('${r.id}',this.closest('tr'))"></td>
+    <td><input type="number" value="${r.deposit||0}" step="0.01" onchange="saveVendorRow('${r.id}',this.closest('tr'))"></td>
+    <td><select onchange="saveVendorRow('${r.id}',this.closest('tr'))">${statOpts}</select></td>
+    <td>${ta(r.notes,'Notes',`saveVendorRow('${r.id}',this.closest('tr'))`)}</td>
+    ${deleteBtn(`deleteVendorRow('${r.id}',this.closest('tr'))`)}`;
+  $('vendors-body').appendChild(tr);
+  setTimeout(() => tr.querySelectorAll('textarea').forEach(t => autoExpand(t)), 10);
+}
+
+async function saveVendorRow(id, tr) {
+  const texts = tr.querySelectorAll('textarea');
+  const nums = tr.querySelectorAll('input[type=number]');
+  const payload = { category:texts[0]?.value||'', vendor_name:texts[1]?.value||'', contact:texts[2]?.value||'', phone:tr.querySelector('input[type=text]')?.value||'', quoted:parseFloat(nums[0]?.value)||0, deposit:parseFloat(nums[1]?.value)||0, status:tr.querySelector('select')?.value||'', notes:texts[3]?.value||'' };
+  debounce(async () => { await sb.from('vendors').update(payload).eq('id', id); showSaved('vendors'); }, 'vendor-'+id);
+}
+
+async function deleteVendorRow(id, tr) { tr.remove(); await sb.from('vendors').delete().eq('id', id); }
+
+async function addVendorRow() {
+  const { data } = await sb.from('vendors').insert({ client_id: currentClient.id, status:'Searching', sort_order:999 }).select().single();
+  if (data) renderVendorRow(data);
+}
+
+// ══════════════════════════════
+//  TIMELINE
+// ══════════════════════════════
+const DEFAULT_TIMELINE = [
+  {start_time:'8:00 AM',end_time:'9:00 AM',event:'Bridal party hair & makeup begins',responsible:'Bride + Bridal Party',is_key:false},
+  {start_time:'10:00 AM',end_time:'11:00 AM',event:'Bride hair & makeup',responsible:'Bride',is_key:false},
+  {start_time:'11:00 AM',end_time:'12:00 PM',event:'Getting ready photos',responsible:'Photographer',is_key:false},
+  {start_time:'12:00 PM',end_time:'1:00 PM',event:'Groom & groomsmen prep',responsible:'Groom',is_key:false},
+  {start_time:'3:00 PM',end_time:'3:30 PM',event:'Guests begin to arrive',responsible:'Coordinator',is_key:false},
+  {start_time:'3:30 PM',end_time:'4:00 PM',event:'✨ CEREMONY BEGINS',responsible:'Officiant',is_key:true},
+  {start_time:'4:00 PM',end_time:'4:30 PM',event:'Cocktail Hour',responsible:'DJ / Coordinator',is_key:false},
+  {start_time:'4:30 PM',end_time:'5:00 PM',event:'Bride & groom portraits',responsible:'Photographer',is_key:false},
+  {start_time:'5:00 PM',end_time:'5:30 PM',event:'✨ GRAND ENTRANCE + FIRST DANCE',responsible:'DJ',is_key:true},
+  {start_time:'5:30 PM',end_time:'6:00 PM',event:'Toasts / Speeches',responsible:'Best Man + Maid of Honor',is_key:false},
+  {start_time:'6:00 PM',end_time:'7:00 PM',event:'Dinner Service',responsible:'Catering',is_key:false},
+  {start_time:'7:00 PM',end_time:'7:15 PM',event:'Cake Cutting',responsible:'Coordinator',is_key:false},
+  {start_time:'7:15 PM',end_time:'9:30 PM',event:'✨ OPEN DANCING',responsible:'DJ',is_key:true},
+  {start_time:'9:30 PM',end_time:'10:00 PM',event:'Bouquet Toss + Last Dance',responsible:'DJ + Coordinator',is_key:false},
+  {start_time:'10:00 PM',end_time:'',event:'Grand Exit / Send-Off 🎉',responsible:'All Vendors',is_key:true},
+];
+
+async function loadTimeline() {
+  const { data } = await sb.from('timeline').select('*').eq('client_id', currentClient.id).order('sort_order').order('created_at');
+  $('timeline-body').innerHTML = '';
+  if (!data || data.length === 0) {
+    const rows = DEFAULT_TIMELINE.map((r,i) => ({...r, client_id:currentClient.id, sort_order:i}));
+    const { data: seeded } = await sb.from('timeline').insert(rows).select();
+    (seeded||[]).forEach(r => renderTimelineRow(r));
+  } else {
+    data.forEach(r => renderTimelineRow(r));
+  }
+}
+
+function renderTimelineRow(r) {
+  const tr = document.createElement('tr');
+  tr.dataset.id = r.id;
+  if (r.is_key) tr.style.background = '#FBF0EA';
+  tr.innerHTML = `
+    <td><input type="text" value="${r.start_time||''}" placeholder="9:00 AM" style="color:var(--burg);font-weight:500" onchange="saveTimelineRow('${r.id}',this.closest('tr'))"></td>
+    <td><input type="text" value="${r.end_time||''}" placeholder="10:00 AM" onchange="saveTimelineRow('${r.id}',this.closest('tr'))"></td>
+    <td>${ta(r.event, 'Event', `saveTimelineRow('${r.id}',this.closest('tr'))`)}
+    </td>
+    <td>${ta(r.responsible,'Responsible',`saveTimelineRow('${r.id}',this.closest('tr'))`)}
+    </td>
+    <td>${ta(r.notes,'Notes',`saveTimelineRow('${r.id}',this.closest('tr'))`)}
+    </td>
+    ${deleteBtn(`deleteTimelineRow('${r.id}',this.closest('tr'))`)}`;
+  $('timeline-body').appendChild(tr);
+  setTimeout(() => tr.querySelectorAll('textarea').forEach(t => autoExpand(t)), 10);
+}
+
+async function saveTimelineRow(id, tr) {
+  const inputs = tr.querySelectorAll('input[type=text]');
+  const texts = tr.querySelectorAll('textarea');
+  const payload = { start_time:inputs[0]?.value||'', end_time:inputs[1]?.value||'', event:texts[0]?.value||'', responsible:texts[1]?.value||'', notes:texts[2]?.value||'' };
+  debounce(async () => { await sb.from('timeline').update(payload).eq('id', id); showSaved('timeline'); }, 'tl-'+id);
+}
+
+async function deleteTimelineRow(id, tr) { tr.remove(); await sb.from('timeline').delete().eq('id', id); }
+
+async function addTimelineRow() {
+  const { data } = await sb.from('timeline').insert({ client_id: currentClient.id, sort_order:999 }).select().single();
+  if (data) renderTimelineRow(data);
+}
+
+// ══════════════════════════════
+//  DECOR
+// ══════════════════════════════
+const DEFAULT_DECOR = [
+  {is_section:true,item:'— CEREMONY —'},
+  {item:'Aisle runner',qty:1,unit_cost:45},{item:'Pew / chair florals',qty:10,unit_cost:15},
+  {item:'Altar arrangement',qty:1,unit_cost:150},{item:'Unity candle set',qty:1,unit_cost:30},
+  {is_section:true,item:'— RECEPTION —'},
+  {item:'Centerpieces',qty:8,unit_cost:60},{item:'Table linens',qty:8,unit_cost:20},
+  {item:'Napkins',qty:80,unit_cost:2},{item:'Charger plates',qty:80,unit_cost:3},
+  {item:'Votive candles',qty:40,unit_cost:2},{item:'Head table garland',qty:1,unit_cost:120},
+  {item:'Wedding cake stand',qty:1,unit_cost:25},{item:'Cake cutting set',qty:1,unit_cost:35},
+  {is_section:true,item:'— SIGNAGE —'},
+  {item:'Welcome sign',qty:1,unit_cost:75},{item:'Seating chart display',qty:1,unit_cost:45},
+  {item:'Table number holders',qty:8,unit_cost:8},{item:'Card & gift box',qty:1,unit_cost:30},
+];
+
+async function loadDecor() {
+  const { data } = await sb.from('decor').select('*').eq('client_id', currentClient.id).order('sort_order').order('created_at');
+  $('decor-body').innerHTML = '';
+  if (!data || data.length === 0) {
+    const rows = DEFAULT_DECOR.map((r,i) => ({...r, client_id:currentClient.id, sort_order:i, status:r.is_section?null:'Needed'}));
+    const { data: seeded } = await sb.from('decor').insert(rows).select();
+    (seeded||[]).forEach(r => renderDecorRow(r));
+  } else {
+    data.forEach(r => renderDecorRow(r));
+  }
+  calcDecor();
+}
+
+function renderDecorRow(r) {
+  const tbody = $('decor-body');
+  if (r.is_section) {
+    const tr = document.createElement('tr');
+    const td = document.createElement('td');
+    td.colSpan=8; td.className='section-cell'; td.textContent=r.item;
+    tr.appendChild(td); tbody.appendChild(tr); return;
+  }
+  const tr = document.createElement('tr');
+  tr.dataset.id = r.id;
+  const statOpts = ['Needed 🛒','Ordered 📦','Have It ✅','Not Needed'].map(v => `<option ${(r.status||'').includes(v.split(' ')[0])?'selected':''}>${v}</option>`).join('');
+  tr.innerHTML = `
+    <td>${ta(r.item,'Item',`saveDecorRow('${r.id}',this.closest('tr'))`)}
+    </td>
+    <td><input type="number" class="dq" value="${r.qty||1}" min="0" style="width:50px" onchange="saveDecorRow('${r.id}',this.closest('tr'))"></td>
+    <td><input type="number" class="du" value="${r.unit_cost||0}" step="0.01" onchange="saveDecorRow('${r.id}',this.closest('tr'))"></td>
+    <td class="dt">${fmt((r.qty||0)*(r.unit_cost||0))}</td>
+    <td>${ta(r.source,'Source',`saveDecorRow('${r.id}',this.closest('tr'))`)}
+    </td>
+    <td><select onchange="saveDecorRow('${r.id}',this.closest('tr'))">${statOpts}</select></td>
+    <td>${ta(r.notes,'Notes',`saveDecorRow('${r.id}',this.closest('tr'))`)}
+    </td>
+    ${deleteBtn(`deleteDecorRow('${r.id}',this.closest('tr'))`)}`;
+  tbody.appendChild(tr);
+  setTimeout(() => tr.querySelectorAll('textarea').forEach(t => autoExpand(t)), 10);
+}
+
+async function saveDecorRow(id, tr) {
+  const texts = tr.querySelectorAll('textarea');
+  const qty = parseFloat(tr.querySelector('.dq')?.value)||0;
+  const unit = parseFloat(tr.querySelector('.du')?.value)||0;
+  const dt = tr.querySelector('.dt');
+  if (dt) dt.textContent = fmt(qty*unit);
+  const payload = { item:texts[0]?.value||'', qty, unit_cost:unit, source:texts[1]?.value||'', status:tr.querySelector('select')?.value||'', notes:texts[2]?.value||'' };
+  debounce(async () => { await sb.from('decor').update(payload).eq('id', id); showSaved('decor'); calcDecor(); }, 'decor-'+id);
+  calcDecor();
+}
+
+async function deleteDecorRow(id, tr) { tr.remove(); await sb.from('decor').delete().eq('id', id); calcDecor(); }
+
+async function addDecorRow() {
+  const { data } = await sb.from('decor').insert({ client_id: currentClient.id, qty:1, unit_cost:0, status:'Needed', sort_order:999 }).select().single();
+  if (data) { renderDecorRow(data); calcDecor(); }
+}
+
+function calcDecor() {
+  let total=0, count=0;
+  document.querySelectorAll('#decor-body tr').forEach(tr => {
+    const q=parseFloat(tr.querySelector('.dq')?.value)||0;
+    const u=parseFloat(tr.querySelector('.du')?.value)||0;
+    const t=q*u; const cell=tr.querySelector('.dt');
+    if(cell){cell.textContent=fmt(t);total+=t;count++;}
+  });
+  $('d-total').textContent=fmt(total);
+  $('d-count').textContent=count;
+}
+
+// ══════════════════════════════
+//  NOTES
+// ══════════════════════════════
+const DEFAULT_SECTIONS = [
+  'Inspiration & Ideas', 'To-Do / Reminders', 'General Notes', 'Dresses'
+];
+let currentSectionId = null;
+let allSections = [];
+let dragSrcId = null;
+
+async function loadNotes() {
+  const { data } = await sb.from('note_sections').select('*').eq('client_id', currentClient.id).order('sort_order').order('created_at');
+  allSections = data || [];
+  if (allSections.length === 0) {
+    const rows = DEFAULT_SECTIONS.map((name, i) => ({ client_id: currentClient.id, name, sort_order: i }));
+    const { data: seeded } = await sb.from('note_sections').insert(rows).select();
+    allSections = seeded || [];
+  }
+  renderSectionsList();
+  if (allSections.length > 0) selectSection(allSections[0].id);
+}
+
+function renderSectionsList() {
+  const list = $('notes-sections-list');
+  list.innerHTML = '';
+  allSections.forEach(s => {
+    const btn = document.createElement('div');
+    btn.className = 'notes-section-btn' + (s.id === currentSectionId ? ' active' : '');
+    btn.dataset.id = s.id;
+    btn.draggable = true;
+    btn.innerHTML = `
+      <span class="drag-handle" title="Drag to reorder">⠿</span>
+      <span class="section-name">${s.name}</span>
+      <button class="del-section" onclick="deleteSection('${s.id}',event)" title="Delete">✕</button>`;
+    btn.onclick = (e) => { if (!e.target.classList.contains('del-section')) selectSection(s.id); };
+    // drag events
+    btn.addEventListener('dragstart', e => { dragSrcId = s.id; btn.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; });
+    btn.addEventListener('dragend', () => { btn.classList.remove('dragging'); document.querySelectorAll('.notes-section-btn').forEach(b => b.classList.remove('drag-over')); });
+    btn.addEventListener('dragover', e => { e.preventDefault(); btn.classList.add('drag-over'); });
+    btn.addEventListener('dragleave', () => btn.classList.remove('drag-over'));
+    btn.addEventListener('drop', e => {
+      e.preventDefault();
+      btn.classList.remove('drag-over');
+      if (dragSrcId === s.id) return;
+      const srcIdx = allSections.findIndex(x => x.id === dragSrcId);
+      const tgtIdx = allSections.findIndex(x => x.id === s.id);
+      const moved = allSections.splice(srcIdx, 1)[0];
+      allSections.splice(tgtIdx, 0, moved);
+      allSections.forEach((x, i) => { x.sort_order = i; sb.from('note_sections').update({ sort_order: i }).eq('id', x.id); });
+      renderSectionsList();
+    });
+    list.appendChild(btn);
+  });
+}
+
+async function selectSection(sectionId) {
+  currentSectionId = sectionId;
+  renderSectionsList();
+  const section = allSections.find(s => s.id === sectionId);
+  if (!section) return;
+  const { data: notes } = await sb.from('notes').select('*').eq('section_id', sectionId).order('created_at');
+  const area = $('notes-content-area');
+  area.innerHTML = `
+    <div class="notes-section-header">
+      <input class="notes-section-title-input" value="${section.name}" placeholder="Section name"
+        onchange="saveSectionName('${sectionId}', this.value)">
+      <button class="btn-add-note" onclick="addNote('${sectionId}')">+ Add Note</button>
+    </div>
+    <div class="notes-list" id="notes-list-${sectionId}"></div>`;
+  (notes || []).forEach(n => renderNote(n, sectionId));
+}
+
+function makeToolbar(noteId, editor) {
+  const toolbar = document.createElement('div');
+  toolbar.className = 'note-toolbar';
+  const cmds = [
+    { label: '<b>B</b>', cmd: 'bold', title: 'Bold' },
+    { label: '<i>I</i>', cmd: 'italic', title: 'Italic' },
+    { label: '<u>U</u>', cmd: 'underline', title: 'Underline' },
+    null,
+    { label: '• List', cmd: 'insertUnorderedList', title: 'Bullet List' },
+    { label: '1. List', cmd: 'insertOrderedList', title: 'Numbered List' },
+    null,
+    { label: 'H1', cmd: 'formatBlock', val: 'H2', title: 'Heading' },
+    { label: 'Normal', cmd: 'formatBlock', val: 'P', title: 'Normal text' },
+  ];
+  cmds.forEach(c => {
+    if (!c) { const sep = document.createElement('div'); sep.className = 'toolbar-sep'; toolbar.appendChild(sep); return; }
+    const btn = document.createElement('button');
+    btn.className = 'toolbar-btn';
+    btn.innerHTML = c.label;
+    btn.title = c.title;
+    btn.type = 'button';
+    btn.onmousedown = (e) => {
+      e.preventDefault();
+      if (c.val) document.execCommand(c.cmd, false, c.val);
+      else document.execCommand(c.cmd, false, null);
+      saveNote(noteId, editor.innerHTML);
+    };
+    toolbar.appendChild(btn);
+  });
+  return toolbar;
+}
+
+function renderNote(n, sectionId) {
+  const list = $(`notes-list-${sectionId}`);
+  if (!list) return;
+  const div = document.createElement('div');
+  div.className = 'note-card';
+  div.dataset.id = n.id;
+  const date = new Date(n.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+  const delBtn = document.createElement('button');
+  delBtn.className = 'note-del';
+  delBtn.textContent = '✕';
+  delBtn.onclick = () => deleteNote(n.id, div);
+
+  const editor = document.createElement('div');
+  editor.className = 'note-editor';
+  editor.contentEditable = true;
+  editor.innerHTML = n.content || '';
+  editor.oninput = () => debounce(() => saveNote(n.id, editor.innerHTML), 'note-'+n.id, 600);
+
+  const meta = document.createElement('div');
+  meta.className = 'note-meta';
+  meta.textContent = date;
+
+  div.appendChild(delBtn);
+  div.appendChild(makeToolbar(n.id, editor));
+  div.appendChild(editor);
+  div.appendChild(meta);
+  list.appendChild(div);
+}
+
+async function addNote(sectionId) {
+  const { data } = await sb.from('notes').insert({ section_id: sectionId, client_id: currentClient.id, content: '' }).select().single();
+  if (data) { renderNote(data, sectionId); }
+}
+
+async function saveNote(id, content) {
+  await sb.from('notes').update({ content }).eq('id', id);
+  showSaved('notes');
+}
+
+async function deleteNote(id, card) {
+  card.remove();
+  await sb.from('notes').delete().eq('id', id);
+}
+
+async function saveSectionName(id, name) {
+  await sb.from('note_sections').update({ name }).eq('id', id);
+  const s = allSections.find(s => s.id === id);
+  if (s) { s.name = name; renderSectionsList(); }
+}
+
+async function addNoteSection() {
+  const name = prompt('Section name:');
+  if (!name) return;
+  const { data } = await sb.from('note_sections').insert({ client_id: currentClient.id, name, sort_order: allSections.length }).select().single();
+  if (data) { allSections.push(data); renderSectionsList(); selectSection(data.id); }
+}
+
+async function deleteSection(id, e) {
+  e.stopPropagation();
+  if (!confirm('Delete this section and all its notes?')) return;
+  await sb.from('notes').delete().eq('section_id', id);
+  await sb.from('note_sections').delete().eq('id', id);
+  allSections = allSections.filter(s => s.id !== id);
+  renderSectionsList();
+  if (allSections.length > 0) selectSection(allSections[0].id);
+  else $('notes-content-area').innerHTML = '<div class="notes-empty">Select a section to view notes</div>';
+}
+
+// ══════════════════════════════
+//  RESEARCH (category-based)
+// ══════════════════════════════
+const DEFAULT_RESEARCH_CATS = ['Florists','Photographers','Caterers','Bands & DJs','Venues','Hair & Makeup'];
+let researchCategories = [];
+let activeResearchCat = 'all';
+
+async function loadResearch() {
+  // load categories
+  const { data: cats } = await sb.from('research_categories')
+    .select('*').eq('client_id', currentClient.id).order('sort_order').order('created_at');
+  researchCategories = cats || [];
+  if (researchCategories.length === 0) {
+    const rows = DEFAULT_RESEARCH_CATS.map((name,i) => ({ client_id: currentClient.id, name, sort_order: i }));
+    const { data: seeded } = await sb.from('research_categories').insert(rows).select();
+    researchCategories = seeded || [];
+  }
+  renderResearchCatTabs();
+  renderResearchContent();
+}
+
+function renderResearchCatTabs() {
+  const container = $('research-cats');
+  container.innerHTML = '';
+  // "All" tab
+  const all = document.createElement('button');
+  all.className = 'research-cat-btn' + (activeResearchCat === 'all' ? ' active' : '');
+  all.textContent = 'All';
+  all.onclick = () => { activeResearchCat = 'all'; renderResearchCatTabs(); renderResearchContent(); };
+  container.appendChild(all);
+
+  researchCategories.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'research-cat-btn' + (activeResearchCat === c.id ? ' active' : '');
+    btn.textContent = c.name;
+    btn.onclick = () => { activeResearchCat = c.id; renderResearchCatTabs(); renderResearchContent(); };
+    container.appendChild(btn);
+  });
+}
+
+async function renderResearchContent() {
+  const content = $('research-content');
+  content.innerHTML = '';
+  const sortVal = $('filter-sort')?.value || '';
+  const ratingVal = parseInt($('filter-rating')?.value) || 0;
+
+  const catsToShow = activeResearchCat === 'all'
+    ? researchCategories
+    : researchCategories.filter(c => c.id === activeResearchCat);
+
+  for (const cat of catsToShow) {
+    let { data: rows } = await sb.from('research')
+      .select('*').eq('client_id', currentClient.id).eq('category_id', cat.id).order('created_at');
+    rows = rows || [];
+
+    // filter by rating
+    if (ratingVal > 0) rows = rows.filter(r => (r.rating||'').length >= ratingVal);
+
+    // sort
+    if (sortVal === 'price-asc') rows.sort((a,b) => (a.quoted_price||0)-(b.quoted_price||0));
+    else if (sortVal === 'price-desc') rows.sort((a,b) => (b.quoted_price||0)-(a.quoted_price||0));
+    else if (sortVal === 'rating-desc') rows.sort((a,b) => (b.rating||'').length-(a.rating||'').length);
+
+    const section = document.createElement('div');
+    section.className = 'research-section';
+    section.dataset.catId = cat.id;
+
+    const hdr = document.createElement('div');
+    hdr.className = 'research-section-header';
+    hdr.innerHTML = `
+      <div class="research-section-title"><em>${cat.name}</em></div>
+      <div style="display:flex;gap:8px">
+        <button class="research-add-btn" onclick="addResearchRow('${cat.id}','${cat.name}')">+ Add Entry</button>
+        <button class="research-del-cat" onclick="deleteResearchCategory('${cat.id}')">Delete Section</button>
+      </div>`;
+    section.appendChild(hdr);
+
+    const wrap = document.createElement('div');
+    wrap.className = 'tbl-wrap';
+    wrap.innerHTML = `<table>
+      <thead><tr>
+        <th>Vendor / Option</th><th>Contact</th><th>Website</th>
+        <th>Quoted Price</th><th>Availability</th><th>Pros</th>
+        <th>Cons</th><th>Rating</th><th>Notes</th><th></th>
+      </tr></thead>
+      <tbody id="research-body-${cat.id}"></tbody>
+    </table>`;
+    section.appendChild(wrap);
+    content.appendChild(section);
+
+    rows.forEach(r => renderResearchRow(r, cat.id));
+    setTimeout(() => section.querySelectorAll('textarea.auto-expand').forEach(t => autoExpand(t)), 20);
+  }
+}
+
+function renderResearchRow(r, catId) {
+  const tbody = $(`research-body-${catId}`);
+  if (!tbody) return;
+  const tr = document.createElement('tr');
+  tr.dataset.id = r.id;
+  const ratingOpts = ['','⭐','⭐⭐','⭐⭐⭐','⭐⭐⭐⭐','⭐⭐⭐⭐⭐']
+    .map(v => `<option ${r.rating===v?'selected':''}>${v}</option>`).join('');
+  tr.innerHTML = `
+    <td>${ta(r.vendor_name||'','Vendor / Option',`saveResearchRow('${r.id}',this.closest('tr'),'${catId}')`)}</td>
+    <td>${ta(r.contact||'','Contact',`saveResearchRow('${r.id}',this.closest('tr'),'${catId}')`)}</td>
+    <td>${ta(r.website||'','Website',`saveResearchRow('${r.id}',this.closest('tr'),'${catId}')`)}</td>
+    <td><input type="number" value="${r.quoted_price||0}" step="0.01" onchange="saveResearchRow('${r.id}',this.closest('tr'),'${catId}')"></td>
+    <td>${ta(r.availability||'','Dates available',`saveResearchRow('${r.id}',this.closest('tr'),'${catId}')`)}</td>
+    <td>${ta(r.pros||'','Pros',`saveResearchRow('${r.id}',this.closest('tr'),'${catId}')`)}</td>
+    <td>${ta(r.cons||'','Cons',`saveResearchRow('${r.id}',this.closest('tr'),'${catId}')`)}</td>
+    <td><select onchange="saveResearchRow('${r.id}',this.closest('tr'),'${catId}')">${ratingOpts}</select></td>
+    <td>${ta(r.notes||'','Notes',`saveResearchRow('${r.id}',this.closest('tr'),'${catId}')`)}</td>
+    ${deleteBtn(`deleteResearchRow('${r.id}',this.closest('tr'))`)}`;
+  tbody.appendChild(tr);
+  setTimeout(() => tr.querySelectorAll('textarea').forEach(t => autoExpand(t)), 10);
+}
+
+async function saveResearchRow(id, tr, catId) {
+  const texts = tr.querySelectorAll('textarea');
+  const num = tr.querySelector('input[type=number]');
+  const payload = {
+    vendor_name: texts[0]?.value||'', contact: texts[1]?.value||'',
+    website: texts[2]?.value||'', quoted_price: parseFloat(num?.value)||0,
+    availability: texts[3]?.value||'', pros: texts[4]?.value||'',
+    cons: texts[5]?.value||'', rating: tr.querySelector('select')?.value||'',
+    notes: texts[6]?.value||''
+  };
+  debounce(async () => { await sb.from('research').update(payload).eq('id', id); showSaved('research'); }, 'res-'+id);
+}
+
+async function deleteResearchRow(id, tr) { tr.remove(); await sb.from('research').delete().eq('id', id); }
+
+async function addResearchRow(catId, catName) {
+  const { data } = await sb.from('research').insert({ client_id: currentClient.id, category_id: catId }).select().single();
+  if (data) renderResearchRow(data, catId);
+}
+
+async function addResearchCategory() {
+  const name = prompt('Category name (e.g. Florists, Bands & DJs):');
+  if (!name) return;
+  const { data } = await sb.from('research_categories').insert({ client_id: currentClient.id, name, sort_order: researchCategories.length }).select().single();
+  if (data) {
+    researchCategories.push(data);
+    activeResearchCat = data.id;
+    renderResearchCatTabs();
+    renderResearchContent();
+  }
+}
+
+async function deleteResearchCategory(id) {
+  if (!confirm('Delete this category and all its entries?')) return;
+  await sb.from('research').delete().eq('category_id', id);
+  await sb.from('research_categories').delete().eq('id', id);
+  researchCategories = researchCategories.filter(c => c.id !== id);
+  if (activeResearchCat === id) activeResearchCat = 'all';
+  renderResearchCatTabs();
+  renderResearchContent();
+}
+
+function applyResearchFilters() { renderResearchContent(); }
+
+// ══════════════════════════════
+//  MESSAGES
+// ══════════════════════════════
+let msgSubscription = null;
+let lastSeenMsgId = null;
+
+async function loadMessages() {
+  const box = $('chat-messages');
+  box.innerHTML = '<div class="chat-loading">Loading messages...</div>';
+
+  // update sub-heading based on role
+  const sub = $('chat-sub');
+  if (sub) sub.textContent = currentUser.role === 'planner'
+    ? `Chat with ${currentClient.p1} & ${currentClient.p2}`
+    : 'Chat with your planner, Gaby';
+
+  const { data } = await sb.from('messages')
+    .select('*')
+    .eq('client_id', currentClient.id)
+    .order('created_at');
+
+  box.innerHTML = '';
+  if (!data || data.length === 0) {
+    box.innerHTML = '<div class="chat-empty">No messages yet — say hello! 👋</div>';
+  } else {
+    let lastDate = '';
+    data.forEach(m => {
+      const d = new Date(m.created_at).toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });
+      if (d !== lastDate) {
+        const lbl = document.createElement('div');
+        lbl.className = 'chat-day-label';
+        lbl.textContent = d;
+        box.appendChild(lbl);
+        lastDate = d;
+      }
+      renderBubble(m, box);
+    });
+    lastSeenMsgId = data[data.length - 1]?.id;
+    box.scrollTop = box.scrollHeight;
+  }
+
+  // mark all as read
+  await sb.from('messages')
+    .update({ read: true })
+    .eq('client_id', currentClient.id)
+    .neq('sender_role', currentUser.role);
+
+  updateBadge(0);
+
+  // subscribe to real-time new messages
+  if (msgSubscription) msgSubscription.unsubscribe();
+  msgSubscription = sb.channel('messages-' + currentClient.id)
+    .on('postgres_changes', {
+      event: 'INSERT', schema: 'public', table: 'messages',
+      filter: `client_id=eq.${currentClient.id}`
+    }, payload => {
+      const m = payload.new;
+      if (m.sender_role !== currentUser.role) {
+        const box = $('chat-messages');
+        // remove empty state
+        const empty = box.querySelector('.chat-empty');
+        if (empty) empty.remove();
+        renderBubble(m, box);
+        box.scrollTop = box.scrollHeight;
+        // mark as read if messages tab is active
+        if ($('cpanel-messages').classList.contains('active')) {
+          sb.from('messages').update({ read: true }).eq('id', m.id);
+        } else {
+          // show badge
+          checkUnread();
+        }
+      }
+    })
+    .subscribe();
+}
+
+function renderBubble(m, box) {
+  const isMe = m.sender_role === currentUser.role;
+  const wrap = document.createElement('div');
+  wrap.className = 'bubble-wrap ' + (isMe ? 'me' : 'them');
+
+  const senderName = isMe
+    ? 'You'
+    : (currentUser.role === 'planner' ? currentClient.p1 : 'Gaby');
+
+  const time = new Date(m.created_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+
+  wrap.innerHTML = `
+    <div class="bubble-sender">${senderName}</div>
+    <div class="bubble ${isMe ? 'me' : 'them'}">${m.content}</div>
+    <div class="bubble-time">${time}</div>`;
+  box.appendChild(wrap);
+}
+
+async function sendMessage() {
+  const input = $('chat-input');
+  const content = input.value.trim();
+  if (!content) return;
+
+  input.value = '';
+  input.style.height = 'auto';
+
+  const { data: msg } = await sb.from('messages').insert({
+    client_id: currentClient.id,
+    sender_role: currentUser.role,
+    sender_name: currentUser.name,
+    content,
+    read: false
+  }).select().single();
+
+  if (msg) {
+    const box = $('chat-messages');
+    const empty = box.querySelector('.chat-empty');
+    if (empty) empty.remove();
+    renderBubble(msg, box);
+    box.scrollTop = box.scrollHeight;
+  }
+}
+
+async function checkUnread() {
+  if (!currentClient) return;
+  const { count } = await sb.from('messages')
+    .select('*', { count: 'exact', head: true })
+    .eq('client_id', currentClient.id)
+    .eq('read', false)
+    .neq('sender_role', currentUser.role);
+  updateBadge(count || 0);
+}
+
+function updateBadge(count) {
+  const badge = $('msg-badge');
+  if (!badge) return;
+  if (count > 0) {
+    badge.textContent = count;
+    badge.style.display = 'inline-flex';
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+// poll for unread every 15 seconds when not on messages tab
+setInterval(() => {
+  if (currentClient && !$('cpanel-messages')?.classList.contains('active')) {
+    checkUnread();
+  }
+}, 15000);
 </script>
 </body>
 </html>
